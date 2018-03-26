@@ -1,4 +1,4 @@
-package com.calvinnor.accomplish
+package com.calvinnor.progress
 
 import org.junit.Test
 

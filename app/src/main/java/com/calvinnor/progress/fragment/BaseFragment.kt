@@ -1,4 +1,4 @@
-package com.calvinnor.accomplish.fragment
+package com.calvinnor.progress.fragment
 
 import android.os.Bundle
 import android.support.annotation.LayoutRes

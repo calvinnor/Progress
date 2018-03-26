@@ -1,7 +1,7 @@
-package com.calvinnor.accomplish.data_layer
+package com.calvinnor.progress.data_layer
 
 import android.os.Handler
-import com.calvinnor.accomplish.model.TaskModel
+import com.calvinnor.progress.model.TaskModel
 
 /**
  * A repository class for holding Task information.

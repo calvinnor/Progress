@@ -1,14 +1,14 @@
-package com.calvinnor.accomplish.app
+package com.calvinnor.progress.app
 
 import android.app.Application
-import com.calvinnor.accomplish.data_layer.TaskDatabase
+import com.calvinnor.progress.data_layer.TaskDatabase
 
 /**
  * Application class.
  *
  * Initialise all required 3rd party libraries and utility classes here.
  */
-class AccomplishApp : Application() {
+class ProgressApp : Application() {
 
     override fun onCreate() {
         super.onCreate()

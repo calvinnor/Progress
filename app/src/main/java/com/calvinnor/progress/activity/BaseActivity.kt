@@ -1,4 +1,4 @@
-package com.calvinnor.accomplish.activity
+package com.calvinnor.progress.activity
 
 import android.os.Bundle
 import android.support.annotation.IdRes
@@ -6,7 +6,7 @@ import android.support.annotation.LayoutRes
 import android.support.annotation.MenuRes
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import com.calvinnor.accomplish.fragment.BaseFragment
+import com.calvinnor.progress.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 /**

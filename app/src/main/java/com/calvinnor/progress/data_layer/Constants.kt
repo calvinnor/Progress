@@ -1,6 +1,6 @@
 @file: JvmName("Constants")
 
-package com.calvinnor.accomplish.data_layer
+package com.calvinnor.progress.data_layer
 
 const val DATABASE_NAME = "tasks.db"
 const val TASK_TABLE_NAME = "taskData"

@@ -1,7 +1,7 @@
-package com.calvinnor.accomplish.activity
+package com.calvinnor.progress.activity
 
-import com.calvinnor.accomplish.R
-import com.calvinnor.accomplish.fragment.MainActivityFragment
+import com.calvinnor.progress.R
+import com.calvinnor.progress.fragment.MainActivityFragment
 
 class MainActivity : BaseActivity() {
 

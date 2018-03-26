@@ -1,8 +1,8 @@
-package com.calvinnor.accomplish.data_layer
+package com.calvinnor.progress.data_layer
 
 import android.arch.persistence.room.*
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
-import com.calvinnor.accomplish.model.TaskModel
+import com.calvinnor.progress.model.TaskModel
 
 /**
  * Interface to manipulate the database.

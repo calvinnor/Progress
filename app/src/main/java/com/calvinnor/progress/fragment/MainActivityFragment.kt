@@ -1,4 +1,4 @@
-package com.calvinnor.accomplish.fragment
+package com.calvinnor.progress.fragment
 
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
@@ -6,10 +6,10 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.View
-import com.calvinnor.accomplish.R
-import com.calvinnor.accomplish.adapter.TaskAdapter
-import com.calvinnor.accomplish.data_layer.TaskRepo
-import com.calvinnor.accomplish.model.TaskModel
+import com.calvinnor.progress.R
+import com.calvinnor.progress.adapter.TaskAdapter
+import com.calvinnor.progress.data_layer.TaskRepo
+import com.calvinnor.progress.model.TaskModel
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.layout_task_add.*
 
