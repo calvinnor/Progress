@@ -2,10 +2,9 @@ package com.calvinnor.accomplish.fragment
 
 import android.os.Bundle
 import android.support.annotation.LayoutRes
+import android.support.annotation.MenuRes
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 
 /**
  * Base Fragment to inherit from.
@@ -14,7 +13,7 @@ import android.view.ViewGroup
 abstract class BaseFragment : Fragment() {
 
     companion object {
-        private val NO_LAYOUT = -1
+        private const val NO_LAYOUT = -1
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -24,19 +23,31 @@ abstract class BaseFragment : Fragment() {
         return getInflatedView(inflater)
     }
 
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(menu != NO_LAYOUT)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        if (this.menu == NO_LAYOUT) return
+        inflater?.inflate(this.menu, menu)
+    }
+
     /**
      * Override this method to provide a fragment layout.
-     *
-     * @return The layout resource ID.
      */
     @LayoutRes
     open protected val layout = NO_LAYOUT
 
     /**
+     * Override this value to provide a Menu.
+     */
+    @MenuRes
+    open protected val menu = NO_LAYOUT
+
+    /**
      * Override this value to provide a fragment tag.
      * This will be used in Fragment Transactions.
-     *
-     * @return A string representing the fragment tag.
      */
     abstract val fragmentTag: String
 

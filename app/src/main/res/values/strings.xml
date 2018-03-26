@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Accomplish</string>
     <string name="action_settings">Settings</string>
+    <string name="action_delete_all">Delete</string>
     <string name="task_add_checkbox_hint">Is this task accomplished?</string>
 
     <!-- Accessibility -->

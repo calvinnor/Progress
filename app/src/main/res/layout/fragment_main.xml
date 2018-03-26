@@ -4,41 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <include
+        android:id="@+id/main_add_task"
+        layout="@layout/layout_task_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/task_add_light_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent" />
 
-        <EditText
-            android:id="@+id/task_add_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/task_add_action"
-            android:background="@android:color/transparent"
-            android:inputType="none"
-            android:maxLines="1"
-            android:paddingBottom="@dimen/task_add_vertical_padding"
-            android:paddingLeft="@dimen/task_add_horizontal_padding"
-            android:paddingRight="@dimen/task_add_horizontal_padding"
-            android:paddingTop="@dimen/task_add_vertical_padding" />
-
-        <ImageView
-            android:id="@+id/task_add_action"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_alignBottom="@id/task_add_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@id/task_add_content"
-            android:layout_centerVertical="true"
-            android:contentDescription="@string/task_add_action_desc"
-            android:foreground="?attr/selectableItemBackground"
-            android:padding="@dimen/task_add_horizontal_padding"
-            android:src="@drawable/ic_add" />
-
-    </RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/main_task_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/main_add_task"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

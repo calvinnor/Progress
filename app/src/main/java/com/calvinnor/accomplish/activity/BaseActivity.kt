@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 abstract class BaseActivity : AppCompatActivity() {
 
     companion object {
-        private val NO_LAYOUT = -1
+        private const val NO_LAYOUT = -1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
