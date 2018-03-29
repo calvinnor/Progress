@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/task_priority_p3"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+    <TextView
+        android:id="@+id/add_task_done"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
+        android:padding="@dimen/add_task_padding"
+        android:text="@string/add_task_done"
+        android:textAllCaps="true"
+        android:textSize="@dimen/text_size_normal"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/add_task_title"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_task_title" />
+
+    <TextView
+        android:id="@+id/add_task_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="@dimen/add_task_padding"
+        android:text="@string/add_task_title"
+        android:textSize="@dimen/text_size_large"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/add_task_done"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/task_add_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:hint="@string/add_task_hint"
+        android:inputType="none"
+        android:maxLines="1"
+        android:padding="@dimen/add_task_padding"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/add_task_title" />
+
+</android.support.constraint.ConstraintLayout>

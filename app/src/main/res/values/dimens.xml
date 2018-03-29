@@ -5,8 +5,7 @@
     <dimen name="text_size_large">20sp</dimen>
 
     <!-- Task Add -->
-    <dimen name="task_add_vertical_padding">8dp</dimen>
-    <dimen name="task_add_horizontal_padding">4dp</dimen>
+    <dimen name="add_task_padding">10dp</dimen>
 
     <!-- Task List -->
     <dimen name="task_list_item_padding">10dp</dimen>

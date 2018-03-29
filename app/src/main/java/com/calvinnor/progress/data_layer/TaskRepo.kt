@@ -1,7 +1,10 @@
 package com.calvinnor.progress.data_layer
 
 import android.os.Handler
+import com.calvinnor.progress.event.AddTaskEvent
+import com.calvinnor.progress.event.TasksEvent
 import com.calvinnor.progress.model.TaskModel
+import com.calvinnor.progress.util.EventBus
 
 /**
  * A repository class for holding Task information.
@@ -10,32 +13,32 @@ import com.calvinnor.progress.model.TaskModel
  */
 object TaskRepo {
 
-    private var tasksListener: TasksListener? = null
-
-    init {
-
-    }
-
-    fun registerListener(tasksListener: TasksListener) {
-        this.tasksListener = tasksListener
-    }
-
-    fun unregisterListener(tasksListener: TasksListener) {
-        if (this.tasksListener == tasksListener) this.tasksListener = null
-    }
-
     private val taskDao = TaskDatabase.taskDao()
     private val dbThread = TaskDatabase.dbThread
     private val uiThread = Handler()
 
-    fun getTasks() = dbThread.post(Runnable {
-        val taskList = taskDao.getTasks()
-        tasksListener?.onTasksFetched(taskList)
-    })
+    private var taskList: MutableList<TaskModel> = mutableListOf()
 
-    fun insertTask(taskModel: TaskModel, callback: Runnable?) = dbThread.post(Runnable {
-        taskDao.insert(taskModel)
-        postCallToUiThread(callback)
+    fun getTasks(force: Boolean) {
+        if (!force) {
+            EventBus.post(TasksEvent(taskList))
+            return
+        }
+        getTasks()
+    }
+
+    fun getTasks() {
+        dbThread.post(Runnable {
+            val dbTaskList = taskDao.getTasks()
+            this.taskList = dbTaskList // Cache these locally
+            EventBus.post(TasksEvent(taskList))
+        })
+    }
+
+    fun insertTask(newTask: TaskModel) = dbThread.post(Runnable {
+        taskList.add(newTask)
+        taskDao.insert(newTask)
+        EventBus.post(AddTaskEvent(newTask))
     })
 
     fun updateTask(taskModel: TaskModel, callback: Runnable?) = dbThread.post(Runnable {
@@ -55,10 +58,5 @@ object TaskRepo {
 
     private fun postCallToUiThread(callback: Runnable?) {
         if (callback != null) uiThread.post(callback)
-    }
-
-    interface TasksListener {
-
-        fun onTasksFetched(taskList: List<TaskModel>)
     }
 }

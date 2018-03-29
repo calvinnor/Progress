@@ -9,17 +9,19 @@ import android.view.View
 import com.calvinnor.progress.R
 import com.calvinnor.progress.adapter.TaskAdapter
 import com.calvinnor.progress.data_layer.TaskRepo
-import com.calvinnor.progress.model.TaskModel
+import com.calvinnor.progress.event.AddTaskEvent
+import com.calvinnor.progress.event.TasksEvent
+import com.calvinnor.progress.util.EventBus
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.layout_task_add.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  * A placeholder fragment containing a simple view.
  */
-class MainActivityFragment : BaseFragment(),
-        TaskRepo.TasksListener {
+class MainActivityFragment : BaseFragment() {
 
-    override val fragmentTag = this.javaClass.simpleName;
+    override val fragmentTag = this.javaClass.simpleName
     override val layout = R.layout.fragment_main
     override val menu = R.menu.menu_main
 
@@ -27,8 +29,14 @@ class MainActivityFragment : BaseFragment(),
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        TaskRepo.registerListener(this)
+        EventBus.subscribe(this)
+        initialiseTaskAdapter()
 
+        // Fetch all Tasks
+        TaskRepo.getTasks()
+    }
+
+    private fun initialiseTaskAdapter() {
         taskAdapter = TaskAdapter()
         val dividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ResourcesCompat.getDrawable(resources, R.drawable.task_item_divider, null)?.let {
@@ -39,13 +47,6 @@ class MainActivityFragment : BaseFragment(),
             adapter = taskAdapter
             addItemDecoration(dividerItemDecoration)
         }
-
-        task_add_action.setOnClickListener {
-            onClick()
-        }
-
-        // Fetch all Tasks
-        TaskRepo.getTasks()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -53,20 +54,15 @@ class MainActivityFragment : BaseFragment(),
             R.id.action_settings -> true
             R.id.action_delete -> {
                 TaskRepo.deleteAllTasks(Runnable { taskAdapter.clearItems() })
-                return true;
+                return true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onTasksFetched(taskList: List<TaskModel>) {
-        taskAdapter.setItems(taskList)
-    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTasks(tasksEvent: TasksEvent) = taskAdapter.setItems(tasksEvent.tasksList)
 
-    private fun onClick() {
-        val taskModel = TaskModel(task_add_content.text.toString(), isComplete = false);
-        taskAdapter.addItem(taskModel)
-        TaskRepo.insertTask(taskModel, Runnable { })
-        task_add_content.text.clear()
-    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onAddTask(taskEvent: AddTaskEvent) = taskAdapter.addItem(taskEvent.task)
 }

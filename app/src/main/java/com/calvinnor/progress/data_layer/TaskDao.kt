@@ -12,7 +12,7 @@ import com.calvinnor.progress.model.TaskModel
 interface TaskDao {
 
     @Query("SELECT * from ${TASK_TABLE_NAME}")
-    fun getTasks(): List<TaskModel>
+    fun getTasks(): MutableList<TaskModel>
 
     @Insert(onConflict = REPLACE)
     fun insert(taskModel: TaskModel)

@@ -4,6 +4,11 @@
     <string name="action_delete_all">Delete</string>
     <string name="task_add_checkbox_hint">Is this task completed?</string>
 
+    <!-- Add Task -->
+    <string name="add_task_title">Add Task</string>
+    <string name="add_task_done">Done</string>
+    <string name="add_task_hint">Add a title for your task…</string>
+
     <!-- Navigation -->
     <string name="navigation_inbox">Inbox</string>
     <string name="navigation_progress">Progress</string>
