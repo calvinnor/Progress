@@ -1,5 +1,6 @@
 package com.calvinnor.progress.adapter
 
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,7 @@ import kotlinx.android.synthetic.main.layout_task_item.view.*
  */
 class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-    private val taskList: MutableList<TaskModel> = mutableListOf()
+    var taskList: MutableList<TaskModel> = mutableListOf()
 
     override fun getItemCount() = taskList.count()
 
@@ -23,20 +24,20 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
                         R.layout.layout_task_item, parent, false))
     }
 
-    fun addItem(taskModel: TaskModel) {
-        taskList.add(taskModel)
-        notifyItemInserted(taskList.size - 1)
-    }
-
-    fun setItems(taskList: List<TaskModel>) {
-        this.taskList.clear()
+    fun setItems(taskList: MutableList<TaskModel>) {
         this.taskList.addAll(taskList)
         notifyDataSetChanged()
     }
 
-    fun clearItems() {
-        this.taskList.clear()
-        notifyDataSetChanged()
+    fun updateItems(newList: MutableList<TaskModel>) {
+        if (taskList.isEmpty()) {
+            setItems(newList)
+            return
+        }
+        val diffResult = DiffUtil.calculateDiff(TaskDiffUtil(taskList, newList))
+        taskList.clear()
+        taskList.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onBindViewHolder(holder: TaskAdapter.TaskViewHolder, position: Int) {
@@ -47,7 +48,10 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        lateinit var taskModel: TaskModel
+
         fun bind(taskModel: TaskModel) {
+            this.taskModel = taskModel
             itemView.task_item_content.text = taskModel.title
         }
     }

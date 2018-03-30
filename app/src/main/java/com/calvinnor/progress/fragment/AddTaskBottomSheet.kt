@@ -31,7 +31,8 @@ class AddTaskBottomSheet : BottomSheetDialogFragment() {
             if (dialog.task_add_content.text.isEmpty()) {
                 dismiss()
             }
-            val taskModel = TaskModel(dialog.task_add_content.text.toString(), isComplete = false)
+
+            val taskModel = TaskModel.buildFrom(dialog.task_add_content.text.toString(), isComplete = false)
             TaskRepo.insertTask(taskModel)
             dismiss()
         }

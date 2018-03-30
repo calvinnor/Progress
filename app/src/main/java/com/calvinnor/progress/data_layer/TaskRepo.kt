@@ -1,10 +1,10 @@
 package com.calvinnor.progress.data_layer
 
-import android.os.Handler
-import com.calvinnor.progress.event.AddTaskEvent
-import com.calvinnor.progress.event.TasksEvent
+import com.calvinnor.progress.event.TaskAddEvent
+import com.calvinnor.progress.event.TaskStateChangeEvent
 import com.calvinnor.progress.model.TaskModel
-import com.calvinnor.progress.util.EventBus
+import com.calvinnor.progress.util.Events
+import org.greenrobot.eventbus.Subscribe
 
 /**
  * A repository class for holding Task information.
@@ -15,48 +15,44 @@ object TaskRepo {
 
     private val taskDao = TaskDatabase.taskDao()
     private val dbThread = TaskDatabase.dbThread
-    private val uiThread = Handler()
 
-    private var taskList: MutableList<TaskModel> = mutableListOf()
+    private val allTasksList = mutableListOf<TaskModel>()
 
-    fun getTasks(force: Boolean) {
-        if (!force) {
-            EventBus.post(TasksEvent(taskList))
-            return
-        }
-        getTasks()
+    init {
+        this.allTasksList.addAll(taskDao.getTasks())
+        Events.subscribe(this)
     }
 
-    fun getTasks() {
-        dbThread.post(Runnable {
-            val dbTaskList = taskDao.getTasks()
-            this.taskList = dbTaskList // Cache these locally
-            EventBus.post(TasksEvent(taskList))
-        })
+    fun getTasks() = allTasksList
+
+    fun insertTask(newTask: TaskModel) {
+        allTasksList.add(newTask)
+        Events.post(TaskAddEvent(newTask))
+        runAsync { taskDao.insert(newTask) }
     }
 
-    fun insertTask(newTask: TaskModel) = dbThread.post(Runnable {
-        taskList.add(newTask)
-        taskDao.insert(newTask)
-        EventBus.post(AddTaskEvent(newTask))
-    })
+    fun updateTask(task: TaskModel) {
+        allTasksList.find { task.id == it.id }?.updateFromModel(task)
+        runAsync { taskDao.updateTask(task) }
+    }
 
-    fun updateTask(taskModel: TaskModel, callback: Runnable?) = dbThread.post(Runnable {
-        taskDao.updateTask(taskModel)
-        postCallToUiThread(callback)
-    })
+    fun setComplete(task: TaskModel, isComplete: Boolean) {
+        allTasksList.find { task.id == it.id }?.isComplete = isComplete
+        Events.post(TaskStateChangeEvent(task))
+        runAsync { taskDao.updateTask(task) }
+    }
 
-    fun deleteAllTasks(callback: Runnable?) = dbThread.post(Runnable {
-        taskDao.deleteAllTasks()
-        postCallToUiThread(callback)
-    })
+    fun deleteTask(taskModel: TaskModel) {
+        allTasksList.remove(allTasksList.find { taskModel.id == it.id })
+        runAsync { taskDao.deleteTask(taskModel) }
+    }
 
-    fun deleteTask(vararg taskModels: TaskModel, callback: Runnable?) = dbThread.post(Runnable {
-        taskDao.deleteTasks(*taskModels)
-        postCallToUiThread(callback)
-    })
+    private fun runAsync(task: () -> Any) {
+        dbThread.post(Runnable { task() })
+    }
 
-    private fun postCallToUiThread(callback: Runnable?) {
-        if (callback != null) uiThread.post(callback)
+    @Subscribe
+    fun onTaskStateChanged(taskStateChangeEvent: TaskStateChangeEvent) {
+        runAsync { taskDao.updateTask(taskStateChangeEvent.task) }
     }
 }

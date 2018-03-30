@@ -8,6 +8,10 @@
     <dimen name="add_task_padding">10dp</dimen>
 
     <!-- Task List -->
-    <dimen name="task_list_item_padding">10dp</dimen>
+    <dimen name="task_item_container_padding">2dp</dimen>
+    <dimen name="task_item_priority_indicator_padding">10dp</dimen>
+    <dimen name="task_list_item_horizontal_padding">12dp</dimen>
+    <dimen name="task_list_item_vertical_padding">15dp</dimen>
+    <dimen name="task_list_item_priority_strip_width">10dp</dimen>
 
 </resources>

@@ -23,7 +23,7 @@ interface TaskDao {
     @Delete
     fun deleteTasks(vararg taskModels: TaskModel)
 
-    @Query("DELETE FROM ${TASK_TABLE_NAME}")
-    fun deleteAllTasks()
+    @Delete
+    fun deleteTask(taskModel: TaskModel)
 
 }

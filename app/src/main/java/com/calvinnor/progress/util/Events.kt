@@ -5,9 +5,9 @@ import org.greenrobot.eventbus.EventBus
 /**
  * Application-level Event posts & subscriptions.
  *
- * Internally uses GreenRobot's EventBus library.
+ * Internally uses GreenRobot's Events library.
  */
-object EventBus {
+object Events {
 
     private var eventBus: EventBus = EventBus.getDefault()
 
@@ -33,7 +33,7 @@ object EventBus {
     fun <T> postSticky(event: T) = eventBus.postSticky(event)
 
     /**
-     * Remove a sticky event held by the EventBus.
+     * Remove a sticky event held by the Bus.
      */
     fun <T> removeSticky(event: T) = eventBus.removeStickyEvent(event)
 }

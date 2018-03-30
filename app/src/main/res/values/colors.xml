@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#536dfe</color>
-    <color name="colorPrimaryDark">#3D5AFE</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#000</color>
+    <color name="colorPrimaryDark">#000</color>
+    <color name="colorAccent">#536dfe</color>
 
     <color name="task_add_light_background">#111</color>
 
