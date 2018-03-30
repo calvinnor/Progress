@@ -1,5 +1,6 @@
 package com.calvinnor.progress.adapter
 
+import android.graphics.drawable.GradientDrawable
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.calvinnor.progress.R
 import com.calvinnor.progress.model.TaskModel
+import com.calvinnor.progress.model.getColor
 import kotlinx.android.synthetic.main.layout_task_item.view.*
 
 /**
@@ -53,6 +55,8 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
         fun bind(taskModel: TaskModel) {
             this.taskModel = taskModel
             itemView.task_item_content.text = taskModel.title
+            val shapeDrawable = itemView.task_item_priority_indicator.background as GradientDrawable
+            shapeDrawable.setColor(taskModel.priority.getColor(itemView.context))
         }
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/bottom_sheet1"
+    android:id="@+id/task_add_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/task_priority_p3"
@@ -47,5 +47,39 @@
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/add_task_title" />
+
+    <RadioGroup
+        android:id="@+id/task_add_priority_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/task_add_content">
+
+        <RadioButton
+            android:id="@+id/task_add_priority_p1"
+            style="@style/PriorityRadioButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_task_priority_p1" />
+
+        <RadioButton
+            android:id="@+id/task_add_priority_p2"
+            style="@style/PriorityRadioButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_task_priority_p2" />
+
+        <RadioButton
+            android:id="@+id/task_add_priority_p3"
+            style="@style/PriorityRadioButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/add_task_priority_p3" />
+
+    </RadioGroup>
 
 </android.support.constraint.ConstraintLayout>

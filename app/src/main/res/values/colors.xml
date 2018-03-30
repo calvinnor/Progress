@@ -2,14 +2,14 @@
 <resources>
     <color name="colorPrimary">#000</color>
     <color name="colorPrimaryDark">#000</color>
-    <color name="colorAccent">#536dfe</color>
+    <color name="colorAccent">#F44336</color>
 
     <color name="task_add_light_background">#111</color>
 
     <!-- Priorities -->
     <color name="task_priority_p1">#F44336</color>
-    <color name="task_priority_p2">#F4511E</color>
-    <color name="task_priority_p3">#757575</color>
+    <color name="task_priority_p2">#FF9800</color>
+    <color name="task_priority_p3">#FFEB3B</color>
 
 
 </resources>

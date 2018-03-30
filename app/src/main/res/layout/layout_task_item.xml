@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="@dimen/task_item_container_padding">
 
     <View
-        android:id="@+id/task_item_priority_strip"
+        android:id="@+id/task_item_priority_indicator"
         android:layout_width="@dimen/task_list_item_priority_strip_width"
         android:layout_height="@dimen/task_list_item_priority_strip_width"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/task_item_priority_indicator_padding"
+        android:layout_marginEnd="@dimen/task_item_priority_indicator_padding"
         android:background="@drawable/task_item_priority_indicator" />
 
     <TextView
@@ -19,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_toStartOf="@id/task_item_priority_indicator"
         android:background="@android:color/transparent"
         android:gravity="center_vertical"
         android:paddingBottom="@dimen/task_list_item_vertical_padding"
@@ -28,4 +30,4 @@
         android:textSize="@dimen/text_size_large"
         tools:text="Task Title" />
 
-</LinearLayout>
+</RelativeLayout>
