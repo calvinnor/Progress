@@ -1,7 +1,8 @@
 package com.calvinnor.progress.data_layer
 
-import com.calvinnor.progress.event.TaskAddEvent
 import com.calvinnor.progress.event.TaskStateChangeEvent
+import com.calvinnor.progress.event.TaskUpdateEvent
+import com.calvinnor.progress.event.UserEvents
 import com.calvinnor.progress.model.TaskModel
 import com.calvinnor.progress.util.Events
 import org.greenrobot.eventbus.Subscribe
@@ -25,15 +26,20 @@ object TaskRepo {
 
     fun getTasks() = allTasksList
 
+    fun getTask(taskId: String) = allTasksList.find { taskId.equals(it.id) }
+
     fun insertTask(newTask: TaskModel) {
         allTasksList.add(newTask)
-        Events.post(TaskAddEvent(newTask))
+        Events.post(UserEvents.TaskAdd(newTask))
         runAsync { taskDao.insert(newTask) }
     }
 
     fun updateTask(task: TaskModel) {
-        allTasksList.find { task.id == it.id }?.updateFromModel(task)
-        runAsync { taskDao.updateTask(task) }
+        val taskToUpdate = allTasksList.find { task.id == it.id }
+        if (taskToUpdate == null) return
+        taskToUpdate.updateFromModel(task)
+        Events.post(TaskUpdateEvent(taskToUpdate))
+        runAsync { taskDao.updateTask(taskToUpdate) }
     }
 
     fun setComplete(task: TaskModel, isComplete: Boolean) {

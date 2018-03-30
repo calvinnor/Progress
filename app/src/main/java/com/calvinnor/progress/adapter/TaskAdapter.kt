@@ -7,8 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.calvinnor.progress.R
+import com.calvinnor.progress.event.UserEvents
 import com.calvinnor.progress.model.TaskModel
 import com.calvinnor.progress.model.getColor
+import com.calvinnor.progress.util.Events
+import com.calvinnor.progress.util.positionOf
 import kotlinx.android.synthetic.main.layout_task_item.view.*
 
 /**
@@ -29,6 +32,12 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
     fun setItems(taskList: MutableList<TaskModel>) {
         this.taskList.addAll(taskList)
         notifyDataSetChanged()
+    }
+
+    fun updateItem(updatedTask: TaskModel) {
+        val taskPosition = taskList.positionOf(updatedTask)
+        if (taskPosition == -1) return // We do not have this task
+        notifyItemChanged(taskPosition)
     }
 
     fun updateItems(newList: MutableList<TaskModel>) {
@@ -57,6 +66,9 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
             itemView.task_item_content.text = taskModel.title
             val shapeDrawable = itemView.task_item_priority_indicator.background as GradientDrawable
             shapeDrawable.setColor(taskModel.priority.getColor(itemView.context))
+            itemView.setOnClickListener { view ->
+                Events.post(UserEvents.TaskEdit(taskModel))
+            }
         }
     }
 }

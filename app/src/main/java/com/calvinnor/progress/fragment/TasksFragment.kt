@@ -1,5 +1,6 @@
 package com.calvinnor.progress.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.DividerItemDecoration
@@ -9,9 +10,11 @@ import android.view.View
 import com.calvinnor.progress.R
 import com.calvinnor.progress.adapter.SwipeController
 import com.calvinnor.progress.adapter.TaskAdapter
+import com.calvinnor.progress.contract.TasksListener
 import com.calvinnor.progress.data_layer.TaskRepo
-import com.calvinnor.progress.event.TaskAddEvent
 import com.calvinnor.progress.event.TaskStateChangeEvent
+import com.calvinnor.progress.event.TaskUpdateEvent
+import com.calvinnor.progress.event.UserEvents
 import com.calvinnor.progress.model.TaskState
 import com.calvinnor.progress.util.Events
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -28,6 +31,12 @@ class TasksFragment : BaseFragment() {
 
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var showTasks: TaskState
+    private lateinit var taskListener: TasksListener
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is TasksListener) taskListener = context
+    }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,9 +58,19 @@ class TasksFragment : BaseFragment() {
     }
 
     @Subscribe
-    fun onTaskAdded(taskAddEvent: TaskAddEvent) {
+    fun onTaskAdded(taskAddEvent: UserEvents.TaskAdd) {
         if (showTasks == TaskState.COMPLETED) return // NO-OP
         taskAdapter.updateItems(showTasks.getTasks(TaskRepo.getTasks()))
+    }
+
+    @Subscribe
+    fun onTaskEdit(taskEditEvent: UserEvents.TaskEdit) {
+        taskListener.onTaskSelected(taskEditEvent.task)
+    }
+
+    @Subscribe
+    fun onTaskUpdate(taskUpdateEvent: TaskUpdateEvent) {
+        taskAdapter.updateItem(taskUpdateEvent.task)
     }
 
     private fun initialiseTaskAdapter() {

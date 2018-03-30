@@ -26,5 +26,6 @@ data class TaskModel(
     fun updateFromModel(taskModel: TaskModel) {
         this.title = taskModel.title
         this.isComplete = taskModel.isComplete
+        this.priority = taskModel.priority
     }
 }

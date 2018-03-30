@@ -20,12 +20,34 @@ import kotlinx.android.synthetic.main.fragment_add_task_bottom_sheet.*
 /**
  * Show the Add Task as a Bottom Sheet.
  */
-class AddTaskBottomSheet : BottomSheetDialogFragment() {
+class TaskBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
-        const val TAG = "AddTaskBottomSheet"
+        const val TAG = "TaskBottomSheet"
+
+        const val ARGS_TASK_ID = "args_task_id"
+
+        /**
+         * Creates a Bottom Sheet to add a task.
+         */
+        fun newInstance(): TaskBottomSheet {
+            return TaskBottomSheet()
+        }
+
+        /**
+         * Creates a Bottom Sheet to edit a task.
+         */
+        fun newInstance(task: TaskModel): TaskBottomSheet {
+            val bottomSheetFragment = TaskBottomSheet()
+            val args = Bundle().apply {
+                putString(ARGS_TASK_ID, task.id)
+            }
+            bottomSheetFragment.arguments = args
+            return bottomSheetFragment
+        }
     }
 
+    private var editTask: TaskModel? = null
     private var taskPriority = TaskPriority(P3)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -33,6 +55,7 @@ class AddTaskBottomSheet : BottomSheetDialogFragment() {
         dialog.setContentView(LayoutInflater.from(context)
                 .inflate(R.layout.fragment_add_task_bottom_sheet, null))
         initDialog(dialog)
+        initEditTask(dialog)
         return dialog
     }
 
@@ -42,8 +65,20 @@ class AddTaskBottomSheet : BottomSheetDialogFragment() {
                 dismiss()
             }
 
-            val taskModel = TaskModel.buildFrom(dialog.task_add_content.text.toString(), false, taskPriority)
-            TaskRepo.insertTask(taskModel)
+            if (editTask != null) { // Edit scenario
+                val newTask = editTask?.copy(
+                        editTask!!.id,
+                        dialog.task_add_content.text.toString(),
+                        editTask!!.isComplete,
+                        taskPriority)
+
+                if (newTask == null) return@setOnClickListener // Shut up Kotlin
+                TaskRepo.updateTask(newTask)
+
+            } else { // New scenario
+                val taskModel = TaskModel.buildFrom(dialog.task_add_content.text.toString(), false, taskPriority)
+                TaskRepo.insertTask(taskModel)
+            }
             dismiss()
         }
 
@@ -65,5 +100,18 @@ class AddTaskBottomSheet : BottomSheetDialogFragment() {
             }
             anim.start()
         }
+    }
+
+    private fun initEditTask(dialog: Dialog) {
+        if (arguments == null) return
+
+        val taskModel = TaskRepo.getTask(arguments.getString(ARGS_TASK_ID))
+        checkNotNull(taskModel, { "Task Model cannot be null: ${arguments.getString(ARGS_TASK_ID)}" })
+        if (taskModel == null) return // Shut up Kotlin
+        editTask = taskModel
+
+        taskPriority = taskModel.priority
+        dialog.task_add_container.setBackgroundColor(taskModel.priority.getColor(context))
+        dialog.task_add_content.setText(taskModel.title)
     }
 }
