@@ -12,7 +12,7 @@
 
     <item
         android:id="@+id/navigation_done"
-        android:icon="@drawable/ic_done"
+        android:icon="@drawable/ic_double_tick"
         android:title="@string/navigation_done" />
 
 </menu>

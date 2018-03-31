@@ -15,12 +15,23 @@ data class TaskPriority(val priority: Int) {
 }
 
 @ColorInt
-fun TaskPriority.getColor(context: Context): Int {
+fun TaskPriority.getPrimaryColor(context: Context): Int {
     val colorRes = when (priority) {
         TaskPriority.P1 -> R.color.task_priority_p1
         TaskPriority.P2 -> R.color.task_priority_p2
         TaskPriority.P3 -> R.color.task_priority_p3
         else -> R.color.task_priority_p3
+    }
+    return ContextCompat.getColor(context, colorRes)
+}
+
+@ColorInt
+fun TaskPriority.getContentColor(context: Context): Int {
+    val colorRes = when (priority) {
+        TaskPriority.P1 -> android.R.color.white
+        TaskPriority.P2 -> android.R.color.white
+        TaskPriority.P3 -> android.R.color.black
+        else -> android.R.color.black
     }
     return ContextCompat.getColor(context, colorRes)
 }

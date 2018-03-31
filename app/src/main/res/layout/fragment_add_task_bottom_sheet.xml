@@ -4,19 +4,18 @@
     android:id="@+id/task_add_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/task_priority_p3"
+    android:background="@color/task_priority_p1"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-    <TextView
+    <ImageView
         android:id="@+id/add_task_done"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:background="?android:attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="@dimen/add_task_padding"
-        android:text="@string/add_task_done"
-        android:textAllCaps="true"
-        android:textSize="@dimen/text_size_normal"
-        android:textStyle="bold"
+        android:src="@drawable/ic_done"
+        android:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/add_task_title"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/add_task_title" />
@@ -53,6 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:padding="@dimen/add_task_priority_padding"
         android:weightSum="3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

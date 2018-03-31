@@ -1,11 +1,10 @@
 package com.calvinnor.progress.fragment
 
-import android.animation.ArgbEvaluator
-import android.animation.ValueAnimator
 import android.app.Dialog
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
+import android.widget.RadioButton
 import com.calvinnor.progress.R
 import com.calvinnor.progress.data_layer.TaskRepo
 import com.calvinnor.progress.model.TaskModel
@@ -13,7 +12,9 @@ import com.calvinnor.progress.model.TaskPriority
 import com.calvinnor.progress.model.TaskPriority.Companion.P1
 import com.calvinnor.progress.model.TaskPriority.Companion.P2
 import com.calvinnor.progress.model.TaskPriority.Companion.P3
-import com.calvinnor.progress.model.getColor
+import com.calvinnor.progress.model.getContentColor
+import com.calvinnor.progress.model.getPrimaryColor
+import com.calvinnor.progress.util.fadeColors
 import kotlinx.android.synthetic.main.fragment_add_task_bottom_sheet.*
 
 
@@ -47,28 +48,29 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    private lateinit var bottomDialog: Dialog
     private var editTask: TaskModel? = null
     private var taskPriority = TaskPriority(P3)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setContentView(LayoutInflater.from(context)
+        bottomDialog = super.onCreateDialog(savedInstanceState)
+        bottomDialog.setContentView(LayoutInflater.from(context)
                 .inflate(R.layout.fragment_add_task_bottom_sheet, null))
-        initDialog(dialog)
-        initEditTask(dialog)
-        return dialog
+        initDialog()
+        initEditTask()
+        return bottomDialog
     }
 
-    private fun initDialog(dialog: Dialog) {
-        dialog.add_task_done.setOnClickListener {
-            if (dialog.task_add_content.text.isEmpty()) {
+    private fun initDialog() {
+        bottomDialog.add_task_done.setOnClickListener {
+            if (bottomDialog.task_add_content.text.isEmpty()) {
                 dismiss()
             }
 
             if (editTask != null) { // Edit scenario
                 val newTask = editTask?.copy(
                         editTask!!.id,
-                        dialog.task_add_content.text.toString(),
+                        bottomDialog.task_add_content.text.toString(),
                         editTask!!.isComplete,
                         taskPriority)
 
@@ -76,15 +78,16 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
                 TaskRepo.updateTask(newTask)
 
             } else { // New scenario
-                val taskModel = TaskModel.buildFrom(dialog.task_add_content.text.toString(), false, taskPriority)
+                val taskModel = TaskModel.buildFrom(bottomDialog.task_add_content.text.toString(), false, taskPriority)
                 TaskRepo.insertTask(taskModel)
             }
             dismiss()
         }
 
-        dialog.task_add_priority_group.setOnCheckedChangeListener { group, checkedId ->
+        bottomDialog.task_add_priority_group.setOnCheckedChangeListener { group, checkedId ->
 
-            val oldColor = taskPriority.getColor(context)
+            val oldColor = taskPriority.getPrimaryColor(context)
+            val oldTextColor = taskPriority.getContentColor(context)
 
             taskPriority = when (checkedId) {
                 R.id.task_add_priority_p1 -> TaskPriority(P1)
@@ -93,17 +96,22 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
                 else -> TaskPriority(P3)
             }
 
-            val anim = ValueAnimator.ofInt(oldColor, taskPriority.getColor(context))
-            anim.setEvaluator(ArgbEvaluator())
-            anim.addUpdateListener { animation ->
-                dialog.task_add_container.setBackgroundColor(animation.animatedValue as Int)
+            fadeColors(oldColor, taskPriority.getPrimaryColor(context)) { color ->
+                setPrimaryColor(color)
             }
-            anim.start()
+
+            fadeColors(oldTextColor, taskPriority.getContentColor(context)) { color ->
+                setContentColor(color)
+            }
         }
     }
 
-    private fun initEditTask(dialog: Dialog) {
-        if (arguments == null) return
+    private fun initEditTask() {
+        if (arguments == null) { // Use defaults
+            setPrimaryColor(taskPriority.getPrimaryColor(context))
+            setContentColor(taskPriority.getContentColor(context))
+            return
+        }
 
         val taskModel = TaskRepo.getTask(arguments.getString(ARGS_TASK_ID))
         checkNotNull(taskModel, { "Task Model cannot be null: ${arguments.getString(ARGS_TASK_ID)}" })
@@ -111,7 +119,27 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         editTask = taskModel
 
         taskPriority = taskModel.priority
-        dialog.task_add_container.setBackgroundColor(taskModel.priority.getColor(context))
-        dialog.task_add_content.setText(taskModel.title)
+        bottomDialog.task_add_content.setText(taskModel.title)
+
+        setPrimaryColor(taskModel.priority.getPrimaryColor(context))
+        setContentColor(taskPriority.getContentColor(context))
+    }
+
+    private fun setPrimaryColor(color: Int) {
+        bottomDialog.task_add_container.setBackgroundColor(color)
+    }
+
+    private fun setContentColor(color: Int) {
+        bottomDialog.add_task_done.setColorFilter(color)
+        bottomDialog.add_task_title.setTextColor(color)
+        bottomDialog.task_add_content.apply {
+            setTextColor(color)
+            setHintTextColor(color)
+        }
+
+        for (position in 0..bottomDialog.task_add_priority_group.childCount - 1) {
+            val radioButton = bottomDialog.task_add_priority_group.getChildAt(position)
+            if (radioButton is RadioButton) radioButton.setTextColor(color)
+        }
     }
 }
