@@ -5,25 +5,26 @@ import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
 import com.calvinnor.progress.R
-import com.calvinnor.progress.adapter.SwipeController
 import com.calvinnor.progress.adapter.TaskAdapter
+import com.calvinnor.progress.adapter.TaskSwipeHandler
 import com.calvinnor.progress.contract.TasksListener
-import com.calvinnor.progress.data_layer.TaskRepo
 import com.calvinnor.progress.event.TaskStateChangeEvent
 import com.calvinnor.progress.event.TaskUpdateEvent
 import com.calvinnor.progress.event.UserEvents
 import com.calvinnor.progress.model.TaskState
 import com.calvinnor.progress.util.Events
+import com.calvinnor.progress.util.swap
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.greenrobot.eventbus.Subscribe
 
 /**
  * A fragment to display Tasks.
  */
-class TasksFragment : BaseFragment() {
+class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
 
     override val fragmentTag = this.javaClass.simpleName
     override val layout = R.layout.fragment_main
@@ -46,21 +47,38 @@ class TasksFragment : BaseFragment() {
 
     fun setShowTasks(showTasks: TaskState) {
         this.showTasks = showTasks
-        taskAdapter.updateItems(showTasks.getTasks(TaskRepo.getTasks()))
+        taskAdapter.updateItems(showTasks.getTasks(dataProxy.getTasks()))
 
-        val itemTouchHelper = ItemTouchHelper(SwipeController.buildFor(showTasks))
+        val itemTouchHelper = ItemTouchHelper(TaskSwipeHandler.buildFor(showTasks, this))
         itemTouchHelper.attachToRecyclerView(main_task_list)
+    }
+
+    override fun onTaskSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
+        val taskModel = (viewHolder as TaskAdapter.TaskViewHolder).taskModel
+        dataProxy.setComplete(taskModel, when (direction) {
+            ItemTouchHelper.LEFT -> false
+            ItemTouchHelper.RIGHT -> true
+            else -> false
+        })
+    }
+
+    override fun onTaskMoved(source: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+        taskAdapter.apply {
+            taskList.swap(source!!.adapterPosition, target!!.adapterPosition)
+            notifyItemMoved(source.adapterPosition, target.adapterPosition)
+        }
+        return true
     }
 
     @Subscribe
     fun onTaskStateChanged(taskStateChangeEvent: TaskStateChangeEvent) {
-        taskAdapter.updateItems(showTasks.getTasks(TaskRepo.getTasks()))
+        taskAdapter.updateItems(showTasks.getTasks(dataProxy.getTasks()))
     }
 
     @Subscribe
     fun onTaskAdded(taskAddEvent: UserEvents.TaskAdd) {
         if (showTasks == TaskState.COMPLETED) return // NO-OP
-        taskAdapter.updateItems(showTasks.getTasks(TaskRepo.getTasks()))
+        taskAdapter.updateItems(showTasks.getTasks(dataProxy.getTasks()))
     }
 
     @Subscribe

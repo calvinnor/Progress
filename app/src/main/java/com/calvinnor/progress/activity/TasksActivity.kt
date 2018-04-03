@@ -1,15 +1,16 @@
 package com.calvinnor.progress.activity
 
-import android.os.AsyncTask
 import android.os.Bundle
 import com.calvinnor.progress.R
 import com.calvinnor.progress.contract.TasksListener
-import com.calvinnor.progress.data_layer.TaskRepo
+import com.calvinnor.progress.event.TasksLoadedEvent
 import com.calvinnor.progress.fragment.TaskBottomSheet
 import com.calvinnor.progress.fragment.TasksFragment
 import com.calvinnor.progress.model.TaskModel
 import com.calvinnor.progress.model.TaskState
+import com.calvinnor.progress.util.Events
 import kotlinx.android.synthetic.main.activity_main.*
+import org.greenrobot.eventbus.Subscribe
 
 class TasksActivity : BaseActivity(), TasksListener {
 
@@ -22,7 +23,6 @@ class TasksActivity : BaseActivity(), TasksListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        LoadTasks(fragment, showTasks).execute()
         main_add_task_fab.setOnClickListener {
             taskBottomSheet = TaskBottomSheet.newInstance()
             taskBottomSheet!!.show(supportFragmentManager, TaskBottomSheet.TAG)
@@ -40,20 +40,23 @@ class TasksActivity : BaseActivity(), TasksListener {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        Events.subscribe(this)
+    }
+
+    override fun onStop() {
+        Events.unsubscribe(this)
+        super.onStop()
+    }
+
     override fun onTaskSelected(task: TaskModel) {
         taskBottomSheet = TaskBottomSheet.newInstance(task)
         taskBottomSheet!!.show(supportFragmentManager, TaskBottomSheet.TAG)
     }
 
-    class LoadTasks(private val tasksFragment: TasksFragment, private val tasksState: TaskState) :
-            AsyncTask<Void, Void, Any>() {
-
-        override fun doInBackground(vararg params: Void?) {
-            TaskRepo.getTasks()
-        }
-
-        override fun onPostExecute(result: Any?) {
-            tasksFragment.setShowTasks(tasksState)
-        }
+    @Subscribe(sticky = true)
+    fun onTasksLoaded(tasksLoadedEvent: TasksLoadedEvent) {
+        fragment.setShowTasks(showTasks)
     }
 }

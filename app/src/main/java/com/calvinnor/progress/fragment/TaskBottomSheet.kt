@@ -6,7 +6,8 @@ import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.widget.RadioButton
 import com.calvinnor.progress.R
-import com.calvinnor.progress.data_layer.TaskRepo
+import com.calvinnor.progress.app.ProgressApp
+import com.calvinnor.progress.contract.DataProxy
 import com.calvinnor.progress.model.TaskModel
 import com.calvinnor.progress.model.TaskPriority
 import com.calvinnor.progress.model.TaskPriority.Companion.P1
@@ -16,6 +17,7 @@ import com.calvinnor.progress.model.getContentColor
 import com.calvinnor.progress.model.getPrimaryColor
 import com.calvinnor.progress.util.fadeColors
 import kotlinx.android.synthetic.main.fragment_add_task_bottom_sheet.*
+import javax.inject.Inject
 
 
 /**
@@ -52,8 +54,13 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     private var editTask: TaskModel? = null
     private var taskPriority = TaskPriority(P3)
 
+    @Inject
+    protected lateinit var dataProxy: DataProxy
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         bottomDialog = super.onCreateDialog(savedInstanceState)
+        ProgressApp.tasksComponent.inject(this)
+
         bottomDialog.setContentView(LayoutInflater.from(context)
                 .inflate(R.layout.fragment_add_task_bottom_sheet, null))
         initDialog()
@@ -75,11 +82,11 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
                         taskPriority)
 
                 if (newTask == null) return@setOnClickListener // Shut up Kotlin
-                TaskRepo.updateTask(newTask)
+                dataProxy.updateTask(newTask)
 
             } else { // New scenario
                 val taskModel = TaskModel.buildFrom(bottomDialog.task_add_content.text.toString(), false, taskPriority)
-                TaskRepo.insertTask(taskModel)
+                dataProxy.insertTask(taskModel)
             }
             dismiss()
         }
@@ -113,7 +120,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
             return
         }
 
-        val taskModel = TaskRepo.getTask(arguments.getString(ARGS_TASK_ID))
+        val taskModel = dataProxy.getTask(arguments.getString(ARGS_TASK_ID))
         checkNotNull(taskModel, { "Task Model cannot be null: ${arguments.getString(ARGS_TASK_ID)}" })
         if (taskModel == null) return // Shut up Kotlin
         editTask = taskModel

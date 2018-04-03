@@ -6,8 +6,11 @@ import android.support.annotation.LayoutRes
 import android.support.annotation.MenuRes
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import com.calvinnor.progress.app.ProgressApp
+import com.calvinnor.progress.contract.DataProxy
 import com.calvinnor.progress.fragment.BaseFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 /**
  * Base Activity to inherit from.
@@ -19,8 +22,12 @@ abstract class BaseActivity : AppCompatActivity() {
         private const val NO_LAYOUT = -1
     }
 
+    @Inject
+    protected lateinit var dataProxy: DataProxy
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ProgressApp.tasksComponent.inject(this)
         setupLayout()
         setupToolbar()
 

@@ -5,6 +5,9 @@ import android.support.annotation.LayoutRes
 import android.support.annotation.MenuRes
 import android.support.v4.app.Fragment
 import android.view.*
+import com.calvinnor.progress.app.ProgressApp
+import com.calvinnor.progress.contract.DataProxy
+import javax.inject.Inject
 
 /**
  * Base Fragment to inherit from.
@@ -14,6 +17,14 @@ abstract class BaseFragment : Fragment() {
 
     companion object {
         private const val NO_LAYOUT = -1
+    }
+
+    @Inject
+    protected lateinit var dataProxy: DataProxy
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ProgressApp.tasksComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater,
