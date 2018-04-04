@@ -34,6 +34,8 @@ class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
     private lateinit var showTasks: TaskState
     private lateinit var taskListener: TasksListener
 
+    private var taskSwipeHandler: ItemTouchHelper? = null
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is TasksListener) taskListener = context
@@ -49,8 +51,9 @@ class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
         this.showTasks = showTasks
         taskAdapter.updateItems(showTasks.getTasks(dataProxy.getTasks()))
 
-        val itemTouchHelper = ItemTouchHelper(TaskSwipeHandler.buildFor(showTasks, this))
-        itemTouchHelper.attachToRecyclerView(main_task_list)
+        taskSwipeHandler?.attachToRecyclerView(null) // Unbind older ItemTouchHelper
+        taskSwipeHandler = ItemTouchHelper(TaskSwipeHandler.buildFor(showTasks, this))
+                .apply { attachToRecyclerView(main_task_list) }
     }
 
     override fun onTaskSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
