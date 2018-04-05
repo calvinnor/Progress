@@ -14,9 +14,17 @@ import org.greenrobot.eventbus.Subscribe
 
 class TasksActivity : BaseActivity(), TasksListener {
 
+    companion object {
+        const val SAVE_TASK_STATE = "save_task_state"
+    }
+
     override val contentLayout = R.layout.activity_main
-    override val fragment = TasksFragment()
     override val fragmentContainer = R.id.main_fragment_container
+    override val fragment: TasksFragment?
+        get() {
+            val tasksFragment = supportFragmentManager.findFragmentByTag(TasksFragment.TAG)
+            return if (tasksFragment == null) TasksFragment() else tasksFragment as TasksFragment
+        }
 
     private var taskBottomSheet: TaskBottomSheet? = null
     private var showTasks = TaskState.ALL
@@ -35,8 +43,12 @@ class TasksActivity : BaseActivity(), TasksListener {
                 R.id.navigation_done -> TaskState.COMPLETED
                 else -> TaskState.ALL
             }
-            fragment.setShowTasks(showTasks)
+            fragment?.setShowTasks(showTasks)
             return@setOnNavigationItemSelectedListener true
+        }
+
+        savedInstanceState?.let {
+            showTasks = it.getSerializable(SAVE_TASK_STATE) as TaskState
         }
     }
 
@@ -50,6 +62,11 @@ class TasksActivity : BaseActivity(), TasksListener {
         super.onStop()
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putSerializable(SAVE_TASK_STATE, showTasks)
+    }
+
     override fun onTaskSelected(task: TaskModel) {
         taskBottomSheet = TaskBottomSheet.newInstance(task)
         taskBottomSheet!!.show(supportFragmentManager, TaskBottomSheet.TAG)
@@ -57,6 +74,6 @@ class TasksActivity : BaseActivity(), TasksListener {
 
     @Subscribe(sticky = true)
     fun onTasksLoaded(tasksLoadedEvent: TasksLoadedEvent) {
-        fragment.setShowTasks(showTasks)
+        fragment?.setShowTasks(showTasks)
     }
 }

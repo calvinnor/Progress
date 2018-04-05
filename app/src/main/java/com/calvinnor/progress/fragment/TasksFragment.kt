@@ -26,6 +26,10 @@ import org.greenrobot.eventbus.Subscribe
  */
 class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
 
+    companion object {
+        const val TAG = "TasksFragment"
+    }
+
     override val fragmentTag = this.javaClass.simpleName
     override val layout = R.layout.fragment_main
     override val menu = R.menu.menu_main
