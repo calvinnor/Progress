@@ -7,7 +7,8 @@
     <!-- Add Task -->
     <string name="add_task_title">Add Task</string>
     <string name="add_task_done">Done</string>
-    <string name="add_task_hint">Add a title for your task…</string>
+    <string name="add_task_title_hint">Title</string>
+    <string name="add_task_description_hint">Description</string>
     <string name="add_task_priority_p1">P1</string>
     <string name="add_task_priority_p2">P2</string>
     <string name="add_task_priority_p3">P3</string>

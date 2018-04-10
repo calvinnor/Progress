@@ -34,18 +34,37 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/task_add_content"
-        android:layout_width="match_parent"
+        android:id="@+id/task_add_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:background="@android:color/transparent"
-        android:hint="@string/add_task_hint"
+        android:hint="@string/add_task_title_hint"
         android:inputType="none"
         android:maxLines="1"
         android:padding="@dimen/add_task_padding"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_task_title" />
+
+    <EditText
+        android:id="@+id/task_add_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:hint="@string/add_task_description_hint"
+        android:inputType="none"
+        android:minLines="3"
+        android:padding="@dimen/add_task_padding"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/task_add_title" />
 
     <RadioGroup
         android:id="@+id/task_add_priority_group"
@@ -56,7 +75,7 @@
         android:weightSum="3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/task_add_content">
+        app:layout_constraintTop_toBottomOf="@id/task_add_description">
 
         <RadioButton
             android:id="@+id/task_add_priority_p1"

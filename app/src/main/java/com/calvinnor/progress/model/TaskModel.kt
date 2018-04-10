@@ -12,14 +12,16 @@ import java.util.*
 data class TaskModel(
         @PrimaryKey @ColumnInfo(name = TASK_COL_ID) var id: String,
         @ColumnInfo(name = TASK_COL_TITLE) var title: String,
+        @ColumnInfo(name = TASK_COL_DESCRIPTION) var description: String,
         @ColumnInfo(name = TASK_COL_COMPLETE) var isComplete: Boolean,
         @Embedded var priority: TaskPriority) {
 
-    constructor() : this("null", "null", false, TaskPriority(P3))
+    constructor() : this("null", "null", "null", false, TaskPriority(P3))
 
     companion object {
-        fun buildFrom(taskTitle: String, isComplete: Boolean, taskPriority: TaskPriority): TaskModel {
-            return TaskModel(UUID.randomUUID().toString(), taskTitle, isComplete, taskPriority)
+        fun buildFrom(taskTitle: String, taskDescription: String,
+                      isComplete: Boolean, taskPriority: TaskPriority): TaskModel {
+            return TaskModel(UUID.randomUUID().toString(), taskTitle, taskDescription, isComplete, taskPriority)
         }
     }
 

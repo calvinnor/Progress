@@ -70,14 +70,15 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
     private fun initDialog() {
         bottomDialog.add_task_done.setOnClickListener {
-            if (bottomDialog.task_add_content.text.isEmpty()) {
+            if (bottomDialog.task_add_title.text.isEmpty()) {
                 dismiss()
             }
 
             if (editTask != null) { // Edit scenario
                 val newTask = editTask?.copy(
                         editTask!!.id,
-                        bottomDialog.task_add_content.text.toString(),
+                        bottomDialog.task_add_title.text.toString(),
+                        bottomDialog.task_add_description.text.toString(),
                         editTask!!.isComplete,
                         taskPriority)
 
@@ -85,7 +86,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
                 dataProxy.updateTask(newTask)
 
             } else { // New scenario
-                val taskModel = TaskModel.buildFrom(bottomDialog.task_add_content.text.toString(), false, taskPriority)
+                val taskModel = TaskModel.buildFrom(bottomDialog.task_add_title.text.toString(), bottomDialog.task_add_description.text.toString(), false, taskPriority)
                 dataProxy.insertTask(taskModel)
             }
             dismiss()
@@ -126,7 +127,8 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         editTask = taskModel
 
         taskPriority = taskModel.priority
-        bottomDialog.task_add_content.setText(taskModel.title)
+        bottomDialog.task_add_title.setText(taskModel.title)
+        bottomDialog.task_add_description.setText(taskModel.description)
 
         setPrimaryColor(taskModel.priority.getPrimaryColor(context))
         setContentColor(taskPriority.getContentColor(context))
@@ -139,7 +141,11 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     private fun setContentColor(color: Int) {
         bottomDialog.add_task_done.setColorFilter(color)
         bottomDialog.add_task_title.setTextColor(color)
-        bottomDialog.task_add_content.apply {
+        bottomDialog.task_add_title.apply {
+            setTextColor(color)
+            setHintTextColor(color)
+        }
+        bottomDialog.task_add_description.apply {
             setTextColor(color)
             setHintTextColor(color)
         }
