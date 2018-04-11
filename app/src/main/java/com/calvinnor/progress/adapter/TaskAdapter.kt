@@ -67,7 +67,7 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
             itemView.task_item_content.text = taskModel.title
             val shapeDrawable = itemView.task_item_priority_indicator.background as GradientDrawable
             shapeDrawable.setColor(taskModel.priority.getPrimaryColor(itemView.context))
-            itemView.setOnClickListener { view ->
+            itemView.setOnClickListener { _ ->
                 Events.post(UserEvents.TaskEdit(taskModel))
             }
         }
