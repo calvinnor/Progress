@@ -7,15 +7,19 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.support.v7.widget.helper.ItemTouchHelper.LEFT
+import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
 import android.view.View
 import com.calvinnor.progress.R
 import com.calvinnor.progress.adapter.TaskAdapter
 import com.calvinnor.progress.adapter.TaskSwipeHandler
 import com.calvinnor.progress.contract.TasksListener
 import com.calvinnor.progress.event.TaskStateChangeEvent
-import com.calvinnor.progress.event.TaskUpdateEvent
 import com.calvinnor.progress.event.UserEvents
-import com.calvinnor.progress.model.TaskState
+import com.calvinnor.progress.model.*
+import com.calvinnor.progress.model.TaskState.Companion.DONE
+import com.calvinnor.progress.model.TaskState.Companion.INBOX
+import com.calvinnor.progress.model.TaskState.Companion.PENDING
 import com.calvinnor.progress.util.Events
 import com.calvinnor.progress.util.swap
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -62,11 +66,28 @@ class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
 
     override fun onTaskSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
         val taskModel = (viewHolder as TaskAdapter.TaskViewHolder).taskModel
-        dataProxy.setComplete(taskModel, when (direction) {
-            ItemTouchHelper.LEFT -> false
-            ItemTouchHelper.RIGHT -> true
-            else -> false
-        })
+
+        if (showTasks.isInbox() && direction == RIGHT) { // Swipe to Pending
+            setStateAndRemove(taskModel, TaskState(PENDING))
+
+        } else if (showTasks.isDone() && direction == LEFT) { // Swipe to Pending
+            setStateAndRemove(taskModel, TaskState(PENDING))
+
+        } else if (showTasks.isPending()) {
+
+            if (direction == LEFT) { // Swipe to Inbox
+                setStateAndRemove(taskModel, TaskState(INBOX))
+
+            } else if (direction == RIGHT) { // Swipe to Done
+                setStateAndRemove(taskModel, TaskState(DONE))
+            }
+        }
+    }
+
+    private fun setStateAndRemove(taskModel: TaskModel, newState: TaskState) {
+        taskModel.state = newState
+        dataProxy.updateTask(taskModel)
+        taskAdapter.removeItem(taskModel)
     }
 
     override fun onTaskMoved(source: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
@@ -84,18 +105,13 @@ class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
 
     @Subscribe
     fun onTaskAdded(taskAddEvent: UserEvents.TaskAdd) {
-        if (showTasks == TaskState.COMPLETED) return // NO-OP
+        if (!showTasks.isInbox()) return // NO-OP
         taskAdapter.updateItems(showTasks.getTasks(dataProxy.getTasks()))
     }
 
     @Subscribe
     fun onTaskEdit(taskEditEvent: UserEvents.TaskEdit) {
         taskListener.onTaskSelected(taskEditEvent.task)
-    }
-
-    @Subscribe
-    fun onTaskUpdate(taskUpdateEvent: TaskUpdateEvent) {
-        taskAdapter.updateItem(taskUpdateEvent.task)
     }
 
     private fun initialiseTaskAdapter() {

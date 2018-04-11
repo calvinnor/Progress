@@ -30,11 +30,6 @@ interface DataProxy {
     fun updateTask(task: TaskModel)
 
     /**
-     * Sets a given task as complete / not complete.
-     */
-    fun setComplete(task: TaskModel, isComplete: Boolean)
-
-    /**
      * Deletes the given task from repository.
      */
     fun deleteTask(taskModel: TaskModel)

@@ -8,17 +8,14 @@ import android.widget.RadioButton
 import com.calvinnor.progress.R
 import com.calvinnor.progress.app.ProgressApp
 import com.calvinnor.progress.contract.DataProxy
-import com.calvinnor.progress.model.TaskModel
-import com.calvinnor.progress.model.TaskPriority
+import com.calvinnor.progress.model.*
 import com.calvinnor.progress.model.TaskPriority.Companion.P1
 import com.calvinnor.progress.model.TaskPriority.Companion.P2
 import com.calvinnor.progress.model.TaskPriority.Companion.P3
-import com.calvinnor.progress.model.getContentColor
-import com.calvinnor.progress.model.getPrimaryColor
+import com.calvinnor.progress.model.TaskState.Companion.INBOX
 import com.calvinnor.progress.util.fadeColors
 import kotlinx.android.synthetic.main.fragment_add_task_bottom_sheet.*
 import javax.inject.Inject
-
 
 /**
  * Show the Add Task as a Bottom Sheet.
@@ -79,14 +76,14 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
                         editTask!!.id,
                         bottomDialog.task_add_title.text.toString(),
                         bottomDialog.task_add_description.text.toString(),
-                        editTask!!.isComplete,
+                        editTask!!.state,
                         taskPriority)
 
                 if (newTask == null) return@setOnClickListener // Shut up Kotlin
                 dataProxy.updateTask(newTask)
 
             } else { // New scenario
-                val taskModel = TaskModel.buildFrom(bottomDialog.task_add_title.text.toString(), bottomDialog.task_add_description.text.toString(), false, taskPriority)
+                val taskModel = TaskModel.buildFrom(bottomDialog.task_add_title.text.toString(), bottomDialog.task_add_description.text.toString(), TaskState(INBOX), taskPriority)
                 dataProxy.insertTask(taskModel)
             }
             dismiss()

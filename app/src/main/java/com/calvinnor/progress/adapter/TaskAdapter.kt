@@ -34,10 +34,11 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun updateItem(updatedTask: TaskModel) {
-        val taskPosition = taskList.positionOf(updatedTask)
+    fun removeItem(removedTask: TaskModel) {
+        val taskPosition = taskList.positionOf(removedTask)
         if (taskPosition == -1) return // We do not have this task
-        notifyItemChanged(taskPosition)
+        taskList.removeAt(taskPosition)
+        notifyItemRemoved(taskPosition)
     }
 
     fun updateItems(newList: MutableList<TaskModel>) {

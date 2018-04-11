@@ -8,6 +8,9 @@ import com.calvinnor.progress.fragment.TaskBottomSheet
 import com.calvinnor.progress.fragment.TasksFragment
 import com.calvinnor.progress.model.TaskModel
 import com.calvinnor.progress.model.TaskState
+import com.calvinnor.progress.model.TaskState.Companion.DONE
+import com.calvinnor.progress.model.TaskState.Companion.INBOX
+import com.calvinnor.progress.model.TaskState.Companion.PENDING
 import com.calvinnor.progress.util.Events
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.Subscribe
@@ -27,7 +30,7 @@ class TasksActivity : BaseActivity(), TasksListener {
         }
 
     private var taskBottomSheet: TaskBottomSheet? = null
-    private var showTasks = TaskState.ALL
+    private var showTasks = TaskState(INBOX)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,17 +41,17 @@ class TasksActivity : BaseActivity(), TasksListener {
 
         main_bottom_navigation_view.setOnNavigationItemSelectedListener {
             showTasks = when (it.itemId) {
-                R.id.navigation_inbox -> TaskState.ALL
-                R.id.navigation_in_progress -> TaskState.PENDING
-                R.id.navigation_done -> TaskState.COMPLETED
-                else -> TaskState.ALL
+                R.id.navigation_inbox -> TaskState(INBOX)
+                R.id.navigation_in_progress -> TaskState(PENDING)
+                R.id.navigation_done -> TaskState(DONE)
+                else -> TaskState(INBOX)
             }
             fragment?.setShowTasks(showTasks)
             return@setOnNavigationItemSelectedListener true
         }
 
         savedInstanceState?.let {
-            showTasks = it.getSerializable(SAVE_TASK_STATE) as TaskState
+            showTasks = TaskState.buildFrom(it.getInt(SAVE_TASK_STATE))
         }
     }
 
@@ -64,7 +67,7 @@ class TasksActivity : BaseActivity(), TasksListener {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putSerializable(SAVE_TASK_STATE, showTasks)
+        outState?.putInt(SAVE_TASK_STATE, showTasks.state)
     }
 
     override fun onTaskSelected(task: TaskModel) {

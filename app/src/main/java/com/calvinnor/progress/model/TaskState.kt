@@ -1,18 +1,21 @@
 package com.calvinnor.progress.model
 
-enum class TaskState {
+data class TaskState(val state: Int) {
 
-    ALL {
-        override fun getTasks(allTasks: List<TaskModel>) = allTasks.toMutableList()
-    },
+    companion object {
+        const val INBOX = 101
+        const val PENDING = 102
+        const val DONE = 103
 
-    PENDING {
-        override fun getTasks(allTasks: List<TaskModel>) = allTasks.filter { it.isComplete == false }.toMutableList()
-    },
-
-    COMPLETED {
-        override fun getTasks(allTasks: List<TaskModel>) = allTasks.filter { it.isComplete == true }.toMutableList()
-    };
-
-    abstract fun getTasks(allTasks: List<TaskModel>): MutableList<TaskModel>
+        fun buildFrom(state: Int) = TaskState(state)
+    }
 }
+
+fun TaskState.getTasks(allTasks: List<TaskModel>): MutableList<TaskModel> {
+    return allTasks.filter { it.state.state.equals(this.state) }.toMutableList()
+}
+
+// Convenience methods for equality
+fun TaskState.isInbox() = this.state == TaskState.INBOX
+fun TaskState.isPending() = this.state == TaskState.PENDING
+fun TaskState.isDone() = this.state == TaskState.DONE

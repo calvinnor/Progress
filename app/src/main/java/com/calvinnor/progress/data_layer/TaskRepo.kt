@@ -44,12 +44,6 @@ object TaskRepo : DataProxy {
         runAsync { taskDao.updateTask(taskToUpdate) }
     }
 
-    override fun setComplete(task: TaskModel, isComplete: Boolean) {
-        allTasksList.find { task.id == it.id }?.isComplete = isComplete
-        Events.post(TaskStateChangeEvent(task))
-        runAsync { taskDao.updateTask(task) }
-    }
-
     override fun deleteTask(taskModel: TaskModel) {
         allTasksList.remove(allTasksList.find { taskModel.id == it.id })
         runAsync { taskDao.deleteTask(taskModel) }
