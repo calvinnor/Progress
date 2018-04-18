@@ -66,39 +66,41 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/task_add_title" />
 
-    <RadioGroup
-        android:id="@+id/task_add_priority_group"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="@dimen/add_task_priority_padding"
-        android:weightSum="3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/task_add_description">
 
-        <RadioButton
-            android:id="@+id/task_add_priority_p1"
-            style="@style/PriorityRadioButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_task_priority_p1" />
+        <ImageButton
+            android:id="@+id/add_task_date"
+            android:layout_width="@dimen/add_task_properties_button_size"
+            android:layout_height="@dimen/add_task_properties_button_size"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="@dimen/add_task_padding"
+            android:src="@drawable/ic_date"
+            android:tint="@android:color/white" />
 
-        <RadioButton
-            android:id="@+id/task_add_priority_p2"
-            style="@style/PriorityRadioButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_task_priority_p2" />
+        <ImageButton
+            android:id="@+id/add_task_time"
+            android:layout_width="@dimen/add_task_properties_button_size"
+            android:layout_height="@dimen/add_task_properties_button_size"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="@dimen/add_task_padding"
+            android:src="@drawable/ic_time"
+            android:tint="@android:color/white" />
 
-        <RadioButton
-            android:id="@+id/task_add_priority_p3"
-            style="@style/PriorityRadioButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/add_task_priority_p3" />
+        <ImageButton
+            android:id="@+id/add_task_priority"
+            android:layout_width="@dimen/add_task_properties_button_size"
+            android:layout_height="@dimen/add_task_properties_button_size"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="@dimen/add_task_padding"
+            android:src="@drawable/ic_priority"
+            android:tint="@android:color/white" />
 
-    </RadioGroup>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

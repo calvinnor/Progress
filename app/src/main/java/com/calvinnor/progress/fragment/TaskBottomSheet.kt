@@ -1,10 +1,14 @@
 package com.calvinnor.progress.fragment
 
+import android.app.DatePickerDialog
 import android.app.Dialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
+import android.support.v7.widget.PopupMenu
 import android.view.LayoutInflater
-import android.widget.RadioButton
+import android.view.MenuItem
+import android.view.View
 import com.calvinnor.progress.R
 import com.calvinnor.progress.app.ProgressApp
 import com.calvinnor.progress.contract.DataProxy
@@ -15,7 +19,10 @@ import com.calvinnor.progress.model.TaskPriority.Companion.P3
 import com.calvinnor.progress.model.TaskState.Companion.INBOX
 import com.calvinnor.progress.util.fadeColors
 import kotlinx.android.synthetic.main.fragment_add_task_bottom_sheet.*
+import java.util.*
+import java.util.Calendar.*
 import javax.inject.Inject
+
 
 /**
  * Show the Add Task as a Bottom Sheet.
@@ -66,6 +73,10 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun initDialog() {
+        bottomDialog.add_task_date.setOnClickListener { showDatePicker() }
+        bottomDialog.add_task_time.setOnClickListener { showTimePicker() }
+        bottomDialog.add_task_priority.setOnClickListener { showPopup(it) }
+
         bottomDialog.add_task_done.setOnClickListener {
             if (bottomDialog.task_add_title.text.isEmpty()) {
                 dismiss()
@@ -88,27 +99,61 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
             }
             dismiss()
         }
+    }
 
-        bottomDialog.task_add_priority_group.setOnCheckedChangeListener { group, checkedId ->
+    private fun setPriority(checkedId: Int) {
+        val oldColor = taskPriority.getPrimaryColor(context)
+        val oldTextColor = taskPriority.getContentColor(context)
 
-            val oldColor = taskPriority.getPrimaryColor(context)
-            val oldTextColor = taskPriority.getContentColor(context)
-
-            taskPriority = when (checkedId) {
-                R.id.task_add_priority_p1 -> TaskPriority(P1)
-                R.id.task_add_priority_p2 -> TaskPriority(P2)
-                R.id.task_add_priority_p3 -> TaskPriority(P3)
-                else -> TaskPriority(P3)
-            }
-
-            fadeColors(oldColor, taskPriority.getPrimaryColor(context)) { color ->
-                setPrimaryColor(color)
-            }
-
-            fadeColors(oldTextColor, taskPriority.getContentColor(context)) { color ->
-                setContentColor(color)
-            }
+        taskPriority = when (checkedId) {
+            R.id.priority_p1 -> TaskPriority(P1)
+            R.id.priority_p2 -> TaskPriority(P2)
+            R.id.priority_p3 -> TaskPriority(P3)
+            else -> TaskPriority(P3)
         }
+
+        fadeColors(oldColor, taskPriority.getPrimaryColor(context)) { color ->
+            setPrimaryColor(color)
+        }
+
+        fadeColors(oldTextColor, taskPriority.getContentColor(context)) { color ->
+            setContentColor(color)
+        }
+    }
+
+    private fun showTimePicker() {
+        val currentTime = GregorianCalendar()
+        val timePickerDialog = TimePickerDialog(context, null,
+                currentTime.get(HOUR_OF_DAY),
+                currentTime.get(MINUTE),
+                false)
+        timePickerDialog.show()
+    }
+
+    private fun showDatePicker() {
+        val currentTime = GregorianCalendar()
+        val datePicker = DatePickerDialog(context, null,
+                currentTime.get(YEAR),
+                currentTime.get(MONTH),
+                currentTime.get(DAY_OF_MONTH))
+        datePicker.datePicker.minDate = currentTime.timeInMillis
+        datePicker.show()
+    }
+
+    private fun showPopup(v: View) {
+        val popup = PopupMenu(context, v)
+        popup.menuInflater.inflate(R.menu.menu_priority, popup.getMenu())
+
+        popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+
+            override fun onMenuItemClick(item: MenuItem): Boolean {
+                setPriority(item.itemId)
+                return true
+            }
+        })
+        // Handle dismissal with: popup.setOnDismissListener(...);
+        // Show the menu
+        popup.show()
     }
 
     private fun initEditTask() {
@@ -136,6 +181,9 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setContentColor(color: Int) {
+        bottomDialog.add_task_date.setColorFilter(color)
+        bottomDialog.add_task_time.setColorFilter(color)
+        bottomDialog.add_task_priority.setColorFilter(color)
         bottomDialog.add_task_done.setColorFilter(color)
         bottomDialog.add_task_title.setTextColor(color)
         bottomDialog.task_add_title.apply {
@@ -145,11 +193,6 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         bottomDialog.task_add_description.apply {
             setTextColor(color)
             setHintTextColor(color)
-        }
-
-        for (position in 0..bottomDialog.task_add_priority_group.childCount - 1) {
-            val radioButton = bottomDialog.task_add_priority_group.getChildAt(position)
-            if (radioButton is RadioButton) radioButton.setTextColor(color)
         }
     }
 }
