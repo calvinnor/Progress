@@ -31,6 +31,7 @@ data class TaskModel(
 
     fun updateFromModel(taskModel: TaskModel) {
         this.title = taskModel.title
+        this.description = taskModel.description
         this.state = taskModel.state
         this.priority = taskModel.priority
     }
