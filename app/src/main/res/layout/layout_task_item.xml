@@ -27,6 +27,7 @@
         android:paddingLeft="@dimen/task_list_item_horizontal_padding"
         android:paddingRight="@dimen/task_list_item_horizontal_padding"
         android:paddingTop="@dimen/task_list_item_vertical_padding"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/text_size_large"
         tools:text="Task Title" />
 
