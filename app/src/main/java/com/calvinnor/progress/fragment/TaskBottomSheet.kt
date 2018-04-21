@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v7.widget.PopupMenu
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import com.calvinnor.progress.R
 import com.calvinnor.progress.app.ProgressApp
@@ -18,11 +17,13 @@ import com.calvinnor.progress.model.TaskPriority.Companion.P2
 import com.calvinnor.progress.model.TaskPriority.Companion.P3
 import com.calvinnor.progress.model.TaskState.Companion.INBOX
 import com.calvinnor.progress.util.fadeColors
+import com.calvinnor.progress.util.getFormattedDate
+import com.calvinnor.progress.util.getFormattedTime
+import com.calvinnor.progress.util.getString
 import kotlinx.android.synthetic.main.fragment_add_task_bottom_sheet.*
 import java.util.*
 import java.util.Calendar.*
 import javax.inject.Inject
-
 
 /**
  * Show the Add Task as a Bottom Sheet.
@@ -57,6 +58,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     private lateinit var bottomDialog: Dialog
     private var editTask: TaskModel? = null
     private var taskPriority = TaskPriority(P3)
+    private var taskTime = Calendar.getInstance()
 
     @Inject
     protected lateinit var dataProxy: DataProxy
@@ -84,17 +86,16 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
             if (editTask != null) { // Edit scenario
                 val newTask = editTask?.copy(
-                        editTask!!.id,
-                        bottomDialog.task_add_title.text.toString(),
-                        bottomDialog.task_add_description.text.toString(),
-                        editTask!!.state,
-                        taskPriority)
+                        id = editTask!!.id,
+                        title = bottomDialog.task_add_title.getString(),
+                        description = bottomDialog.task_add_description.getString(),
+                        state = editTask!!.state,
+                        priority = taskPriority) ?: return@setOnClickListener
 
-                if (newTask == null) return@setOnClickListener // Shut up Kotlin
                 dataProxy.updateTask(newTask)
 
             } else { // New scenario
-                val taskModel = TaskModel.buildFrom(bottomDialog.task_add_title.text.toString(), bottomDialog.task_add_description.text.toString(), TaskState(INBOX), taskPriority)
+                val taskModel = TaskModel.buildFrom(bottomDialog.task_add_title.text.toString(), bottomDialog.task_add_description.text.toString(), TaskState(INBOX), taskPriority, dateTime = taskTime)
                 dataProxy.insertTask(taskModel)
             }
             dismiss()
@@ -112,6 +113,8 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
             else -> TaskPriority(P3)
         }
 
+        bottomDialog.add_task_priority_text.text = taskPriority.getText(context)
+
         fadeColors(oldColor, taskPriority.getPrimaryColor(context)) { color ->
             setPrimaryColor(color)
         }
@@ -123,7 +126,17 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
     private fun showTimePicker() {
         val currentTime = GregorianCalendar()
-        val timePickerDialog = TimePickerDialog(context, null,
+        val timePickerListener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+            bottomDialog.add_task_time_text.text = getFormattedTime(hourOfDay, minute)
+            taskTime.apply {
+                set(HOUR_OF_DAY, hourOfDay)
+                set(MINUTE, minute)
+            }
+        }
+
+        val timePickerDialog = TimePickerDialog(
+                context,
+                timePickerListener,
                 currentTime.get(HOUR_OF_DAY),
                 currentTime.get(MINUTE),
                 false)
@@ -132,7 +145,17 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
     private fun showDatePicker() {
         val currentTime = GregorianCalendar()
-        val datePicker = DatePickerDialog(context, null,
+        val datePickerListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            bottomDialog.add_task_date_text.text = getFormattedDate(year, month, dayOfMonth)
+            taskTime.apply {
+                set(YEAR, year)
+                set(MONTH, month)
+                set(DAY_OF_MONTH, dayOfMonth)
+            }
+        }
+        val datePicker = DatePickerDialog(
+                context,
+                datePickerListener,
                 currentTime.get(YEAR),
                 currentTime.get(MONTH),
                 currentTime.get(DAY_OF_MONTH))
@@ -142,18 +165,14 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
     private fun showPopup(v: View) {
         val popup = PopupMenu(context, v)
-        popup.menuInflater.inflate(R.menu.menu_priority, popup.getMenu())
-
-        popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
-
-            override fun onMenuItemClick(item: MenuItem): Boolean {
+        popup.apply {
+            menuInflater.inflate(R.menu.menu_priority, popup.menu)
+            setOnMenuItemClickListener { item ->
                 setPriority(item.itemId)
-                return true
+                true
             }
-        })
-        // Handle dismissal with: popup.setOnDismissListener(...);
-        // Show the menu
-        popup.show()
+            show()
+        }
     }
 
     private fun initEditTask() {
@@ -169,8 +188,15 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         editTask = taskModel
 
         taskPriority = taskModel.priority
-        bottomDialog.task_add_title.setText(taskModel.title)
-        bottomDialog.task_add_description.setText(taskModel.description)
+        taskTime = taskModel.dateTime
+
+        bottomDialog.apply {
+            task_add_title.setText(taskModel.title)
+            task_add_description.setText(taskModel.description)
+            add_task_date_text.text = getFormattedDate(taskTime)
+            add_task_time_text.text = getFormattedTime(taskTime)
+            add_task_priority_text.text = taskPriority.getText(context)
+        }
 
         setPrimaryColor(taskModel.priority.getPrimaryColor(context))
         setContentColor(taskPriority.getContentColor(context))
@@ -181,18 +207,25 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setContentColor(color: Int) {
-        bottomDialog.add_task_date.setColorFilter(color)
-        bottomDialog.add_task_time.setColorFilter(color)
-        bottomDialog.add_task_priority.setColorFilter(color)
-        bottomDialog.add_task_done.setColorFilter(color)
-        bottomDialog.add_task_title.setTextColor(color)
-        bottomDialog.task_add_title.apply {
-            setTextColor(color)
-            setHintTextColor(color)
-        }
-        bottomDialog.task_add_description.apply {
-            setTextColor(color)
-            setHintTextColor(color)
+        bottomDialog.apply {
+            add_task_date_text.setTextColor(color)
+            add_task_date_image.setColorFilter(color)
+            add_task_time_text.setTextColor(color)
+            add_task_time_image.setColorFilter(color)
+            add_task_priority_text.setTextColor(color)
+            add_task_priority_image.setColorFilter(color)
+            add_task_done.setColorFilter(color)
+            add_task_title.setTextColor(color)
+
+            task_add_title.apply {
+                setTextColor(color)
+                setHintTextColor(color)
+            }
+
+            task_add_description.apply {
+                setTextColor(color)
+                setHintTextColor(color)
+            }
         }
     }
 }

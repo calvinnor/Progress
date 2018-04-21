@@ -35,3 +35,13 @@ fun TaskPriority.getContentColor(context: Context): Int {
     }
     return ContextCompat.getColor(context, colorRes)
 }
+
+fun TaskPriority.getText(context: Context): String {
+    val stringRes = when (priority) {
+        TaskPriority.P1 -> R.string.add_task_priority_p1
+        TaskPriority.P2 -> R.string.add_task_priority_p2
+        TaskPriority.P3 -> R.string.add_task_priority_p3
+        else -> R.string.add_task_priority
+    }
+    return context.getString(stringRes)
+}

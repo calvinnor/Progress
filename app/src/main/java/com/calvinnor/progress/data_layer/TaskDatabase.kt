@@ -3,11 +3,13 @@ package com.calvinnor.progress.data_layer
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import com.calvinnor.progress.app.DATABASE_IN_MEMORY_TEST
 import com.calvinnor.progress.model.TaskModel
 
 @Database(entities = arrayOf(TaskModel::class), version = 1)
+@TypeConverters(RoomTypeConverters::class)
 abstract class TaskDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao

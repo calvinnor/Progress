@@ -5,9 +5,10 @@
     <dimen name="text_size_large">20sp</dimen>
 
     <!-- Task Add -->
+    <dimen name="add_task_small_padding">5dp</dimen>
     <dimen name="add_task_padding">10dp</dimen>
     <dimen name="add_task_priority_padding">10dp</dimen>
-    <dimen name="add_task_properties_button_size">50dp</dimen>
+    <dimen name="add_task_properties_button_size">40dp</dimen>
 
     <!-- Task List -->
     <dimen name="task_item_container_padding">2dp</dimen>
