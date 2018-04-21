@@ -14,6 +14,8 @@ The source code is open, and you are welcome to contribute to it :)
 
 * EventBus
 
+* Dagger 2
+
 * Compat
   * AppCompat
   * ConstraintLayout
@@ -27,6 +29,7 @@ The source code is open, and you are welcome to contribute to it :)
   * BottomNavigationView
   * BottomSheetDialogFragment
   * FAB
+  * Date & Time Pickers
 
 # Contributors
 
