@@ -11,10 +11,6 @@ data class TaskState(val state: Int) {
     }
 }
 
-fun TaskState.getTasks(allTasks: List<TaskModel>): MutableList<TaskModel> {
-    return allTasks.filter { it.state.state.equals(this.state) }.toMutableList()
-}
-
 // Convenience methods for equality
 fun TaskState.isInbox() = this.state == TaskState.INBOX
 fun TaskState.isPending() = this.state == TaskState.PENDING

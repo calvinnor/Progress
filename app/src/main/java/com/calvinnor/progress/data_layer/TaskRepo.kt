@@ -1,12 +1,14 @@
 package com.calvinnor.progress.data_layer
 
 import com.calvinnor.progress.contract.DataProxy
-import com.calvinnor.progress.event.TaskStateChangeEvent
 import com.calvinnor.progress.event.TaskUpdateEvent
 import com.calvinnor.progress.event.TasksLoadedEvent
 import com.calvinnor.progress.event.UserEvents
 import com.calvinnor.progress.model.TaskModel
+import com.calvinnor.progress.model.TaskState
+import com.calvinnor.progress.model.tree.TaskTree
 import com.calvinnor.progress.util.Events
+import com.calvinnor.progress.util.async
 
 /**
  * A repository class for holding Task information.
@@ -19,33 +21,43 @@ object TaskRepo : DataProxy {
     private val taskDao = TaskDatabase.taskDao()
     private val dbThread = TaskDatabase.dbThread
 
-    private val allTasksList = mutableListOf<TaskModel>()
+    // In-memory cache of Tasks
+    private val taskTree = TaskTree
+
+    // Prevent multiple initialisation
+    private var isInitialised = false
 
     fun initialise() {
-        allTasksList.addAll(taskDao.getTasks())
-        Events.postSticky(TasksLoadedEvent(allTasksList))
+        if (isInitialised) throw RuntimeException("Do not call init more than once!")
+        async {
+            // Execute in an AsyncTask to avoid Main Thread halt
+            taskTree.setTasks(taskDao.getTasks())
+
+            isInitialised = true
+            Events.postSticky(TasksLoadedEvent())
+        }.execute()
     }
 
-    override fun getTasks() = allTasksList
+    override fun getAllTasks() = taskTree.getAllTasks()
 
-    override fun getTask(taskId: String) = allTasksList.find { taskId.equals(it.id) }
+    override fun getTasksForState(taskState: TaskState) = taskTree.getTasksForState(taskState)!!
+
+    override fun getTask(taskId: String) = taskTree.getTaskById(taskId)
 
     override fun insertTask(newTask: TaskModel) {
-        allTasksList.add(newTask)
+        taskTree.insertTask(newTask)
         Events.post(UserEvents.TaskAdd(newTask))
         runAsync { taskDao.insert(newTask) }
     }
 
     override fun updateTask(task: TaskModel) {
-        val taskToUpdate = allTasksList.find { task.id == it.id }
-        if (taskToUpdate == null) return
-        taskToUpdate.updateFromModel(task)
-        Events.post(TaskUpdateEvent(taskToUpdate))
-        runAsync { taskDao.updateTask(taskToUpdate) }
+        taskTree.updateTask(task)
+        Events.post(TaskUpdateEvent(task))
+        runAsync { taskDao.updateTask(task) }
     }
 
     override fun deleteTask(taskModel: TaskModel) {
-        allTasksList.remove(allTasksList.find { taskModel.id == it.id })
+        taskTree.removeTask(taskModel)
         runAsync { taskDao.deleteTask(taskModel) }
     }
 

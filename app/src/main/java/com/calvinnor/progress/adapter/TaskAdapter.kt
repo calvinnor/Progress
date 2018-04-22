@@ -41,6 +41,12 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
         notifyItemRemoved(taskPosition)
     }
 
+    fun updateItem(task: TaskModel) {
+        val taskPosition = taskList.positionOf(task)
+        if (taskPosition == -1) return // We do not have this task
+        notifyItemChanged(taskPosition)
+    }
+
     fun updateItems(newList: MutableList<TaskModel>) {
         if (taskList.isEmpty()) {
             setItems(newList)

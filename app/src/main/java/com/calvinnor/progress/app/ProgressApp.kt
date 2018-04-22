@@ -5,7 +5,6 @@ import com.calvinnor.progress.data_layer.TaskDatabase
 import com.calvinnor.progress.data_layer.TaskRepo
 import com.calvinnor.progress.injection.DaggerTasksComponent
 import com.calvinnor.progress.injection.TasksProvider
-import com.calvinnor.progress.util.async
 
 /**
  * Application class.
@@ -25,10 +24,11 @@ class ProgressApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        TaskDatabase.init(this)
+        initDatabase()
+    }
 
-        async {
-            TaskRepo.initialise()
-        }.execute()
+    private fun initDatabase() {
+        TaskDatabase.init(this)
+        TaskRepo.initialise()
     }
 }

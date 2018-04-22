@@ -55,7 +55,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private lateinit var bottomDialog: Dialog
+    private lateinit var rootView: Dialog
     private var editTask: TaskModel? = null
     private var taskPriority = TaskPriority(P3)
     private var taskTime = Calendar.getInstance()
@@ -64,38 +64,38 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     protected lateinit var dataProxy: DataProxy
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        bottomDialog = super.onCreateDialog(savedInstanceState)
+        rootView = super.onCreateDialog(savedInstanceState)
         ProgressApp.tasksComponent.inject(this)
 
-        bottomDialog.setContentView(LayoutInflater.from(context)
+        rootView.setContentView(LayoutInflater.from(context)
                 .inflate(R.layout.fragment_add_task_bottom_sheet, null))
         initDialog()
         initEditTask()
-        return bottomDialog
+        return rootView
     }
 
     private fun initDialog() {
-        bottomDialog.add_task_date.setOnClickListener { showDatePicker() }
-        bottomDialog.add_task_time.setOnClickListener { showTimePicker() }
-        bottomDialog.add_task_priority.setOnClickListener { showPopup(it) }
+        rootView.add_task_date.setOnClickListener { showDatePicker() }
+        rootView.add_task_time.setOnClickListener { showTimePicker() }
+        rootView.add_task_priority.setOnClickListener { showPopup(it) }
 
-        bottomDialog.add_task_done.setOnClickListener {
-            if (bottomDialog.task_add_title.text.isEmpty()) {
+        rootView.add_task_done.setOnClickListener {
+            if (rootView.task_add_title.text.isEmpty()) {
                 dismiss()
             }
 
             if (editTask != null) { // Edit scenario
                 val newTask = editTask?.copy(
                         id = editTask!!.id,
-                        title = bottomDialog.task_add_title.getString(),
-                        description = bottomDialog.task_add_description.getString(),
+                        title = rootView.task_add_title.getString(),
+                        description = rootView.task_add_description.getString(),
                         state = editTask!!.state,
                         priority = taskPriority) ?: return@setOnClickListener
 
                 dataProxy.updateTask(newTask)
 
             } else { // New scenario
-                val taskModel = TaskModel.buildFrom(bottomDialog.task_add_title.text.toString(), bottomDialog.task_add_description.text.toString(), TaskState(INBOX), taskPriority, dateTime = taskTime)
+                val taskModel = TaskModel.buildFrom(rootView.task_add_title.text.toString(), rootView.task_add_description.text.toString(), TaskState(INBOX), taskPriority, dateTime = taskTime)
                 dataProxy.insertTask(taskModel)
             }
             dismiss()
@@ -113,7 +113,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
             else -> TaskPriority(P3)
         }
 
-        bottomDialog.add_task_priority_text.text = taskPriority.getText(context)
+        rootView.add_task_priority_text.text = taskPriority.getText(context)
 
         fadeColors(oldColor, taskPriority.getPrimaryColor(context)) { color ->
             setPrimaryColor(color)
@@ -127,7 +127,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     private fun showTimePicker() {
         val currentTime = GregorianCalendar()
         val timePickerListener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-            bottomDialog.add_task_time_text.text = getFormattedTime(hourOfDay, minute)
+            rootView.add_task_time_text.text = getFormattedTime(hourOfDay, minute)
             taskTime.apply {
                 set(HOUR_OF_DAY, hourOfDay)
                 set(MINUTE, minute)
@@ -146,7 +146,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     private fun showDatePicker() {
         val currentTime = GregorianCalendar()
         val datePickerListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-            bottomDialog.add_task_date_text.text = getFormattedDate(year, month, dayOfMonth)
+            rootView.add_task_date_text.text = getFormattedDate(year, month, dayOfMonth)
             taskTime.apply {
                 set(YEAR, year)
                 set(MONTH, month)
@@ -190,7 +190,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         taskPriority = taskModel.priority
         taskTime = taskModel.dateTime
 
-        bottomDialog.apply {
+        rootView.apply {
             task_add_title.setText(taskModel.title)
             task_add_description.setText(taskModel.description)
             add_task_date_text.text = getFormattedDate(taskTime)
@@ -203,11 +203,11 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setPrimaryColor(color: Int) {
-        bottomDialog.task_add_container.setBackgroundColor(color)
+        rootView.task_add_container.setBackgroundColor(color)
     }
 
     private fun setContentColor(color: Int) {
-        bottomDialog.apply {
+        rootView.apply {
             add_task_date_text.setTextColor(color)
             add_task_date_image.setColorFilter(color)
             add_task_time_text.setTextColor(color)

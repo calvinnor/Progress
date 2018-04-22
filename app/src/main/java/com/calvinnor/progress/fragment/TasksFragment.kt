@@ -14,7 +14,7 @@ import com.calvinnor.progress.R
 import com.calvinnor.progress.adapter.TaskAdapter
 import com.calvinnor.progress.adapter.TaskSwipeHandler
 import com.calvinnor.progress.contract.TasksListener
-import com.calvinnor.progress.event.TaskStateChangeEvent
+import com.calvinnor.progress.event.TaskUpdateEvent
 import com.calvinnor.progress.event.UserEvents
 import com.calvinnor.progress.model.*
 import com.calvinnor.progress.model.TaskState.Companion.DONE
@@ -57,7 +57,7 @@ class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
 
     fun setShowTasks(showTasks: TaskState) {
         this.showTasks = showTasks
-        taskAdapter.updateItems(showTasks.getTasks(dataProxy.getTasks()))
+        setItemsOnAdapter()
 
         taskSwipeHandler?.attachToRecyclerView(null) // Unbind older ItemTouchHelper
         taskSwipeHandler = ItemTouchHelper(TaskSwipeHandler.buildFor(showTasks, this))
@@ -85,8 +85,8 @@ class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
     }
 
     private fun setStateAndRemove(taskModel: TaskModel, newState: TaskState) {
-        taskModel.state = newState
-        dataProxy.updateTask(taskModel)
+        val updatedModel = taskModel.copy(taskModel.id, taskModel.title, taskModel.description, taskModel.dateTime, newState, taskModel.priority)
+        dataProxy.updateTask(updatedModel)
         taskAdapter.removeItem(taskModel)
     }
 
@@ -99,14 +99,14 @@ class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
     }
 
     @Subscribe
-    fun onTaskStateChanged(taskStateChangeEvent: TaskStateChangeEvent) {
-        taskAdapter.updateItems(showTasks.getTasks(dataProxy.getTasks()))
+    fun onTaskUpdated(taskUpdateEvent: TaskUpdateEvent) {
+        taskAdapter.updateItem(taskUpdateEvent.task)
     }
 
     @Subscribe
     fun onTaskAdded(taskAddEvent: UserEvents.TaskAdd) {
         if (!showTasks.isInbox()) return // NO-OP
-        taskAdapter.updateItems(showTasks.getTasks(dataProxy.getTasks()))
+        setItemsOnAdapter()
     }
 
     @Subscribe
@@ -125,5 +125,9 @@ class TasksFragment : BaseFragment(), TaskSwipeHandler.TaskSwipeListener {
             adapter = taskAdapter
             addItemDecoration(dividerItemDecoration)
         }
+    }
+
+    private fun setItemsOnAdapter() {
+        taskAdapter.updateItems(dataProxy.getTasksForState(showTasks))
     }
 }
