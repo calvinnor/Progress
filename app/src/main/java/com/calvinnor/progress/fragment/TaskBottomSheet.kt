@@ -5,9 +5,9 @@ import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v7.widget.PopupMenu
+import android.support.v7.widget.ListPopupWindow
 import android.view.LayoutInflater
-import android.view.View
+import android.widget.ArrayAdapter
 import com.calvinnor.progress.R
 import com.calvinnor.progress.contract.DataProxy
 import com.calvinnor.progress.injection.dependencyComponent
@@ -61,6 +61,8 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     private var taskPriority = TaskPriority(P3)
     private var taskTime = Calendar.getInstance()
 
+    private lateinit var priorityPopupWindow: ListPopupWindow
+
     @Inject
     protected lateinit var dataProxy: DataProxy
 
@@ -72,13 +74,14 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
                 .inflate(R.layout.fragment_add_task_bottom_sheet, null))
         initDialog()
         initEditTask()
+        initMembers()
         return rootView
     }
 
     private fun initDialog() {
         rootView.add_task_date.setOnClickListener { showDatePicker() }
         rootView.add_task_time.setOnClickListener { showTimePicker() }
-        rootView.add_task_priority.setOnClickListener { showPopup(it) }
+        rootView.add_task_priority.setOnClickListener { showPopup() }
 
         rootView.add_task_done.setOnClickListener {
             if (rootView.task_add_title.text.isEmpty()) {
@@ -104,26 +107,21 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setPriority(checkedId: Int) {
+    private fun setPriority(newPriority: TaskPriority) {
         val oldColor = taskPriority.getPrimaryColor(context)
         val oldTextColor = taskPriority.getContentColor(context)
 
-        taskPriority = when (checkedId) {
-            R.id.priority_p1 -> TaskPriority(P1)
-            R.id.priority_p2 -> TaskPriority(P2)
-            R.id.priority_p3 -> TaskPriority(P3)
-            else -> TaskPriority(P3)
-        }
+        rootView.add_task_priority_text.text = newPriority.getText(context)
 
-        rootView.add_task_priority_text.text = taskPriority.getText(context)
-
-        fadeColors(oldColor, taskPriority.getPrimaryColor(context)) { color ->
+        fadeColors(oldColor, newPriority.getPrimaryColor(context)) { color ->
             setPrimaryColor(color)
         }
 
-        fadeColors(oldTextColor, taskPriority.getContentColor(context)) { color ->
+        fadeColors(oldTextColor, newPriority.getContentColor(context)) { color ->
             setContentColor(color)
         }
+
+        taskPriority = newPriority
     }
 
     private fun showTimePicker() {
@@ -165,17 +163,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         datePicker.show()
     }
 
-    private fun showPopup(v: View) {
-        val popup = PopupMenu(context, v)
-        popup.apply {
-            menuInflater.inflate(R.menu.menu_priority, popup.menu)
-            setOnMenuItemClickListener { item ->
-                setPriority(item.itemId)
-                true
-            }
-            show()
-        }
-    }
+    private fun showPopup() = priorityPopupWindow.show()
 
     private fun initEditTask() {
         if (arguments == null) { // Use defaults
@@ -202,6 +190,20 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
         setPrimaryColor(taskModel.priority.getPrimaryColor(context))
         setContentColor(taskPriority.getContentColor(context))
+    }
+
+    private fun initMembers() {
+        val priorityList = arrayOf(TaskPriority(P1), TaskPriority(P2), TaskPriority(P3))
+        val priorityAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, priorityList)
+        priorityPopupWindow = ListPopupWindow(context).apply {
+            isModal = true
+            anchorView = rootView.add_task_priority
+            setAdapter(priorityAdapter)
+            setOnItemClickListener { _, _, position, _ ->
+                dismiss()
+                setPriority(priorityList[position])
+            }
+        }
     }
 
     private fun setPrimaryColor(color: Int) {

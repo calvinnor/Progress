@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.annotation.ColorInt
 import android.support.v4.content.ContextCompat
 import com.calvinnor.progress.R
+import com.calvinnor.progress.app.ProgressApp
 
 data class TaskPriority(val priority: Int) {
 
@@ -12,6 +13,9 @@ data class TaskPriority(val priority: Int) {
         const val P2 = 2000
         const val P3 = 3000
     }
+
+    // TODO: Hacky - try to find a better implementation
+    override fun toString() = this.getText(context = ProgressApp.appContext)
 }
 
 @ColorInt
