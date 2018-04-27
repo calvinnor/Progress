@@ -5,8 +5,8 @@ import android.support.annotation.LayoutRes
 import android.support.annotation.MenuRes
 import android.support.v4.app.Fragment
 import android.view.*
-import com.calvinnor.progress.app.ProgressApp
 import com.calvinnor.progress.contract.DataProxy
+import com.calvinnor.progress.injection.dependencyComponent
 import javax.inject.Inject
 
 /**
@@ -24,7 +24,7 @@ abstract class BaseFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ProgressApp.tasksComponent.inject(this)
+        dependencyComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater,

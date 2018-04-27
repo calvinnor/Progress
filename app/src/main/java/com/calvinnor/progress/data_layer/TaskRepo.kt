@@ -8,7 +8,6 @@ import com.calvinnor.progress.model.TaskModel
 import com.calvinnor.progress.model.TaskState
 import com.calvinnor.progress.model.tree.TaskTree
 import com.calvinnor.progress.util.Events
-import com.calvinnor.progress.util.async
 
 /**
  * A repository class for holding Task information.
@@ -29,20 +28,21 @@ object TaskRepo : DataProxy {
 
     fun initialise() {
         if (isInitialised) throw RuntimeException("Do not call init more than once!")
-        async {
-            // Execute in an AsyncTask to avoid Main Thread halt
+        runAsync {
             taskTree.setTasks(taskDao.getTasks())
-
             isInitialised = true
             Events.postSticky(TasksLoadedEvent())
-        }.execute()
+        }
     }
 
     override fun getAllTasks() = taskTree.getAllTasks()
 
     override fun getTasksForState(taskState: TaskState) = taskTree.getTasksForState(taskState)!!
 
-    override fun getTask(taskId: String) = taskTree.getTaskById(taskId)
+    override fun getTask(taskId: String): TaskModel {
+        val task = taskTree.getTaskById(taskId)
+        return if (task == null) taskDao.getTask(taskId) else task
+    }
 
     override fun insertTask(newTask: TaskModel) {
         taskTree.insertTask(newTask)

@@ -14,6 +14,9 @@ interface TaskDao {
     @Query("SELECT * from ${TASK_TABLE_NAME}")
     fun getTasks(): MutableList<TaskModel>
 
+    @Query("SELECT * from ${TASK_TABLE_NAME} WHERE ${TASK_COL_ID} = :taskId")
+    fun getTask(taskId: String): TaskModel
+
     @Insert(onConflict = REPLACE)
     fun insert(taskModel: TaskModel)
 

@@ -6,9 +6,9 @@ import android.support.annotation.LayoutRes
 import android.support.annotation.MenuRes
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import com.calvinnor.progress.app.ProgressApp
 import com.calvinnor.progress.contract.DataProxy
 import com.calvinnor.progress.fragment.BaseFragment
+import com.calvinnor.progress.injection.dependencyComponent
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -27,7 +27,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ProgressApp.tasksComponent.inject(this)
+        dependencyComponent.inject(this)
         setupLayout()
         setupToolbar()
 

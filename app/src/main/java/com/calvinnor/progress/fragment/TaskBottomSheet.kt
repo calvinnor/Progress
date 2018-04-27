@@ -9,13 +9,14 @@ import android.support.v7.widget.PopupMenu
 import android.view.LayoutInflater
 import android.view.View
 import com.calvinnor.progress.R
-import com.calvinnor.progress.app.ProgressApp
 import com.calvinnor.progress.contract.DataProxy
+import com.calvinnor.progress.injection.dependencyComponent
 import com.calvinnor.progress.model.*
 import com.calvinnor.progress.model.TaskPriority.Companion.P1
 import com.calvinnor.progress.model.TaskPriority.Companion.P2
 import com.calvinnor.progress.model.TaskPriority.Companion.P3
 import com.calvinnor.progress.model.TaskState.Companion.INBOX
+import com.calvinnor.progress.service.SystemServices
 import com.calvinnor.progress.util.fadeColors
 import com.calvinnor.progress.util.getFormattedDate
 import com.calvinnor.progress.util.getFormattedTime
@@ -65,7 +66,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         rootView = super.onCreateDialog(savedInstanceState)
-        ProgressApp.tasksComponent.inject(this)
+        dependencyComponent.inject(this)
 
         rootView.setContentView(LayoutInflater.from(context)
                 .inflate(R.layout.fragment_add_task_bottom_sheet, null))
@@ -97,6 +98,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
             } else { // New scenario
                 val taskModel = TaskModel.buildFrom(rootView.task_add_title.text.toString(), rootView.task_add_description.text.toString(), TaskState(INBOX), taskPriority, dateTime = taskTime)
                 dataProxy.insertTask(taskModel)
+                SystemServices.alarmScheduler.scheduleAlarm(taskModel)
             }
             dismiss()
         }

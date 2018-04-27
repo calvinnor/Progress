@@ -23,5 +23,8 @@
 
     <!-- Accessibility -->
     <string name="task_add_action_desc">Add task</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_priority">Reminders</string>
 
 </resources>

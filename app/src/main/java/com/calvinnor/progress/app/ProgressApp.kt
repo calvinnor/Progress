@@ -1,10 +1,10 @@
 package com.calvinnor.progress.app
 
 import android.app.Application
+import android.content.Context
 import com.calvinnor.progress.data_layer.TaskDatabase
 import com.calvinnor.progress.data_layer.TaskRepo
-import com.calvinnor.progress.injection.DaggerTasksComponent
-import com.calvinnor.progress.injection.TasksProvider
+import com.calvinnor.progress.injection.initialise
 
 /**
  * Application class.
@@ -14,21 +14,22 @@ import com.calvinnor.progress.injection.TasksProvider
 class ProgressApp : Application() {
 
     companion object {
-        val tasksComponent = buildTasksComponent()
-
-        private fun buildTasksComponent() = DaggerTasksComponent
-                .builder()
-                .tasksProvider(TasksProvider)
-                .build()
+        lateinit var appContext: Context
     }
 
     override fun onCreate() {
         super.onCreate()
+        appContext = applicationContext
         initDatabase()
+        initDagger()
     }
 
     private fun initDatabase() {
         TaskDatabase.init(this)
         TaskRepo.initialise()
+    }
+
+    private fun initDagger() {
+        initialise()
     }
 }
