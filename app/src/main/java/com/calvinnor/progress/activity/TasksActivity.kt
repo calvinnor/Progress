@@ -1,5 +1,6 @@
 package com.calvinnor.progress.activity
 
+import android.content.Intent
 import android.os.Bundle
 import com.calvinnor.progress.R
 import com.calvinnor.progress.contract.TasksListener
@@ -71,8 +72,12 @@ class TasksActivity : BaseActivity(), TasksListener {
     }
 
     override fun onTaskSelected(task: TaskModel) {
-        taskBottomSheet = TaskBottomSheet.newInstance(task)
-        taskBottomSheet!!.show(supportFragmentManager, TaskBottomSheet.TAG)
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, task.title)
+            type = "text/plain"
+        }
+        startActivity(sendIntent);
     }
 
     @Subscribe(sticky = true)

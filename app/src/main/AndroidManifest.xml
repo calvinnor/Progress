@@ -23,7 +23,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
+        <activity
+            android:name=".activity.AddTaskActivity"
+            android:label="@string/add_task_activity_label"
+            android:theme="@style/Theme.AppCompat.Translucent">
+            <!-- Accept only Text -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <service android:enabled="true" android:name=".service.AlarmService"/>
 
     </application>

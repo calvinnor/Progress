@@ -86,13 +86,18 @@ abstract class BaseActivity : AppCompatActivity() {
     @MenuRes
     open protected val menuLayout = NO_LAYOUT
 
+    /**
+     * Override this value to decide if this activity should have a toolbar.
+     */
+    protected open val hasToolbar = true
+
     private fun setupLayout() {
         if (contentLayout == NO_LAYOUT) return
         setContentView(contentLayout)
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(toolbar)
+        if (hasToolbar) setSupportActionBar(toolbar)
     }
 
     private fun setupFragment() {

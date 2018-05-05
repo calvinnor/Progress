@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v7.widget.ListPopupWindow
 import android.view.LayoutInflater
@@ -35,12 +36,24 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         const val TAG = "TaskBottomSheet"
 
         const val ARGS_TASK_ID = "args_task_id"
+        const val ARGS_TASK_TITLE = "args_task_title"
 
         /**
          * Creates a Bottom Sheet to add a task.
          */
         fun newInstance(): TaskBottomSheet {
             return TaskBottomSheet()
+        }
+
+        /**
+         * Creates a Bottom Sheet to add a task with provided title.
+         */
+        fun newInstance(taskTitle: String): TaskBottomSheet {
+            val bottomSheetFragment = TaskBottomSheet()
+            bottomSheetFragment.arguments = Bundle().apply {
+                putString(ARGS_TASK_TITLE, taskTitle)
+            }
+            return bottomSheetFragment
         }
 
         /**
@@ -67,7 +80,12 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     protected lateinit var dataProxy: DataProxy
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        rootView = super.onCreateDialog(savedInstanceState)
+        rootView = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        rootView.setOnDismissListener {
+            activity.finish()
+        }
+
         dependencyComponent.inject(this)
 
         rootView.setContentView(LayoutInflater.from(context)
@@ -167,8 +185,14 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
     private fun initEditTask() {
         if (arguments == null) { // Use defaults
-            setPrimaryColor(taskPriority.getPrimaryColor(context))
-            setContentColor(taskPriority.getContentColor(context))
+            setDefaultColors()
+            return
+        }
+
+        val taskTitle = arguments.getString(ARGS_TASK_TITLE)
+        if (taskTitle != null) { // Share action
+            setDefaultColors()
+            rootView.task_add_title.setText(taskTitle)
             return
         }
 
@@ -189,6 +213,11 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         }
 
         setPrimaryColor(taskModel.priority.getPrimaryColor(context))
+        setContentColor(taskPriority.getContentColor(context))
+    }
+
+    private fun setDefaultColors() {
+        setPrimaryColor(taskPriority.getPrimaryColor(context))
         setContentColor(taskPriority.getContentColor(context))
     }
 

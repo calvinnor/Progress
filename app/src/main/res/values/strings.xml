@@ -5,6 +5,7 @@
     <string name="task_add_checkbox_hint">Is this task completed?</string>
 
     <!-- Add Task -->
+    <string name="add_task_activity_label">Create Task</string>
     <string name="add_task_title">Add Task</string>
     <string name="add_task_done">Done</string>
     <string name="add_task_title_hint">Title</string>
