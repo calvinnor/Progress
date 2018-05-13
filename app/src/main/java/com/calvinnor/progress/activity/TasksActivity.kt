@@ -1,6 +1,8 @@
 package com.calvinnor.progress.activity
 
 import android.os.Bundle
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
 import com.calvinnor.progress.R
 import com.calvinnor.progress.contract.TasksListener
 import com.calvinnor.progress.event.TasksLoadedEvent
@@ -13,6 +15,7 @@ import com.calvinnor.progress.model.TaskState.Companion.INBOX
 import com.calvinnor.progress.model.TaskState.Companion.PENDING
 import com.calvinnor.progress.util.Events
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_navigation_drawer.*
 import org.greenrobot.eventbus.Subscribe
 
 class TasksActivity : BaseActivity(), TasksListener {
@@ -21,7 +24,7 @@ class TasksActivity : BaseActivity(), TasksListener {
         const val SAVE_TASK_STATE = "save_task_state"
     }
 
-    override val contentLayout = R.layout.activity_main
+    override val contentLayout = R.layout.activity_navigation_drawer
     override val fragmentContainer = R.id.main_fragment_container
     override val fragment: TasksFragment?
         get() {
@@ -34,6 +37,7 @@ class TasksActivity : BaseActivity(), TasksListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupDrawer()
         main_add_task_fab.setOnClickListener {
             taskBottomSheet = TaskBottomSheet.newInstance()
             taskBottomSheet!!.show(supportFragmentManager, TaskBottomSheet.TAG)
@@ -78,5 +82,20 @@ class TasksActivity : BaseActivity(), TasksListener {
     @Subscribe(sticky = true)
     fun onTasksLoaded(tasksLoadedEvent: TasksLoadedEvent) {
         fragment?.setShowTasks(showTasks)
+    }
+
+    private fun setupDrawer() {
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
 }

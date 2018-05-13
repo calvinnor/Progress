@@ -110,6 +110,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
     private fun setPriority(newPriority: TaskPriority) {
         val oldColor = taskPriority.getPrimaryColor(context)
         val oldTextColor = taskPriority.getContentColor(context)
+        val oldHintColor = taskPriority.getHintColor(context)
 
         rootView.add_task_priority_text.text = newPriority.getText(context)
 
@@ -119,6 +120,10 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
         fadeColors(oldTextColor, newPriority.getContentColor(context)) { color ->
             setContentColor(color)
+        }
+
+        fadeColors(oldHintColor, newPriority.getHintColor(context)) {
+            setHintColor(it)
         }
 
         taskPriority = newPriority
@@ -169,6 +174,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         if (arguments == null) { // Use defaults
             setPrimaryColor(taskPriority.getPrimaryColor(context))
             setContentColor(taskPriority.getContentColor(context))
+            setHintColor(taskPriority.getHintColor(context))
             return
         }
 
@@ -181,6 +187,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
         taskTime = taskModel.dateTime
 
         rootView.apply {
+            add_task_title.setText(R.string.update_task_title)
             task_add_title.setText(taskModel.title)
             task_add_description.setText(taskModel.description)
             add_task_date_text.text = getFormattedDate(taskTime)
@@ -190,6 +197,7 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
 
         setPrimaryColor(taskModel.priority.getPrimaryColor(context))
         setContentColor(taskPriority.getContentColor(context))
+        setHintColor(taskPriority.getHintColor(context))
     }
 
     private fun initMembers() {
@@ -220,16 +228,15 @@ class TaskBottomSheet : BottomSheetDialogFragment() {
             add_task_priority_image.setColorFilter(color)
             add_task_done.setColorFilter(color)
             add_task_title.setTextColor(color)
+            task_add_title.setTextColor(color)
+            task_add_description.setTextColor(color)
+        }
+    }
 
-            task_add_title.apply {
-                setTextColor(color)
-                setHintTextColor(color)
-            }
-
-            task_add_description.apply {
-                setTextColor(color)
-                setHintTextColor(color)
-            }
+    private fun setHintColor(color: Int) {
+        rootView.apply {
+            task_add_title.setHintTextColor(color)
+            task_add_description.setHintTextColor(color)
         }
     }
 }

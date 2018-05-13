@@ -11,6 +11,7 @@ import com.calvinnor.progress.event.UserEvents
 import com.calvinnor.progress.model.TaskModel
 import com.calvinnor.progress.model.getPrimaryColor
 import com.calvinnor.progress.util.Events
+import com.calvinnor.progress.util.getFormattedDateForList
 import com.calvinnor.progress.util.positionOf
 import kotlinx.android.synthetic.main.layout_task_item.view.*
 
@@ -71,6 +72,7 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
         fun bind(taskModel: TaskModel) {
             this.taskModel = taskModel
             itemView.task_item_content.text = taskModel.title
+            itemView.task_item_date.text = getFormattedDateForList(taskModel.dateTime)
             val shapeDrawable = itemView.task_item_priority_indicator.background as GradientDrawable
             shapeDrawable.setColor(taskModel.priority.getPrimaryColor(itemView.context))
             itemView.setOnClickListener { _ ->

@@ -4,12 +4,18 @@
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#F44336</color>
 
+    <!-- Navigation Drawer -->
+    <color name="nav_drawer_bg">#212121</color>
+
     <color name="task_add_light_background">#111</color>
 
     <!-- Priorities -->
     <color name="task_priority_p1">#F44336</color>
     <color name="task_priority_p2">#FF9800</color>
     <color name="task_priority_p3">#FFEB3B</color>
+    <color name="priority_p1_hint">#eeeeee</color>
+    <color name="priority_p2_hint">#eeeeee</color>
+    <color name="priority_p3_hint">#2c2c2c</color>
 
 
 </resources>

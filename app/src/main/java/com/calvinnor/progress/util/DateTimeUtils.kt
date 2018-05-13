@@ -2,11 +2,15 @@
 
 package com.calvinnor.progress.util
 
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.*
 
 private const val TIME_FORMATTER = "%02d:%02d %s"
 private const val DATE_FORMATTER = "%02d-%02d-%02d"
+private const val TASK_DATE_FORMATTER = "dd MMM"
+
+private val dateFormatter = SimpleDateFormat(TASK_DATE_FORMATTER, Locale.ENGLISH)
 
 /**
  * Returns a human-readable Time.
@@ -47,3 +51,6 @@ fun getFormattedDate(year: Int, monthOfYear: Int, dayOfMonth: Int): String {
 
 fun getFormattedDate(calendar: Calendar) =
         getFormattedDate(calendar.get(YEAR), calendar.get(MONTH), calendar.get(DAY_OF_MONTH))
+
+fun getFormattedDateForList(calendar: Calendar) =
+        dateFormatter.format(calendar.time)

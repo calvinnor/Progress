@@ -6,6 +6,7 @@
 
     <!-- Add Task -->
     <string name="add_task_title">Add Task</string>
+    <string name="update_task_title">Update Task</string>
     <string name="add_task_done">Done</string>
     <string name="add_task_title_hint">Title</string>
     <string name="add_task_description_hint">Description</string>
@@ -16,6 +17,11 @@
     <string name="add_task_time">Time</string>
     <string name="add_task_priority">Priority</string>
 
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Progress</string>
+
     <!-- Navigation -->
     <string name="navigation_inbox">Inbox</string>
     <string name="navigation_progress">Progress</string>
@@ -23,7 +29,7 @@
 
     <!-- Accessibility -->
     <string name="task_add_action_desc">Add task</string>
-    
+
     <!-- Notifications -->
     <string name="notification_channel_priority">Reminders</string>
 

@@ -40,6 +40,17 @@ fun TaskPriority.getContentColor(context: Context): Int {
     return ContextCompat.getColor(context, colorRes)
 }
 
+@ColorInt
+fun TaskPriority.getHintColor(context: Context): Int {
+    val colorRes = when (priority) {
+        TaskPriority.P1 -> R.color.priority_p1_hint
+        TaskPriority.P2 -> R.color.priority_p2_hint
+        TaskPriority.P3 -> R.color.priority_p3_hint
+        else -> android.R.color.black
+    }
+    return ContextCompat.getColor(context, colorRes)
+}
+
 fun TaskPriority.getText(context: Context): String {
     val stringRes = when (priority) {
         TaskPriority.P1 -> R.string.add_task_priority_p1

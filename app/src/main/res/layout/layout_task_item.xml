@@ -20,15 +20,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginBottom="@dimen/task_item_container_padding"
         android:layout_toStartOf="@id/task_item_priority_indicator"
-        android:background="@android:color/transparent"
         android:gravity="center_vertical"
-        android:paddingBottom="@dimen/task_list_item_vertical_padding"
         android:paddingLeft="@dimen/task_list_item_horizontal_padding"
         android:paddingRight="@dimen/task_list_item_horizontal_padding"
         android:paddingTop="@dimen/task_list_item_vertical_padding"
         android:textColor="@android:color/white"
         android:textSize="@dimen/text_size_large"
         tools:text="Task Title" />
+
+    <TextView
+        android:id="@+id/task_item_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/task_item_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="@dimen/task_item_container_padding"
+        android:layout_toStartOf="@id/task_item_priority_indicator"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/task_list_item_vertical_padding"
+        android:paddingLeft="@dimen/task_list_item_horizontal_padding"
+        android:paddingRight="@dimen/task_list_item_horizontal_padding"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_small"
+        tools:text="27 March" />
 
 </RelativeLayout>

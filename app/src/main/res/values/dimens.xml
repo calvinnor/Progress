@@ -1,6 +1,7 @@
 <resources>
 
     <!-- Text Sizes -->
+    <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
     <dimen name="text_size_large">20sp</dimen>
 
@@ -9,6 +10,11 @@
     <dimen name="add_task_padding">10dp</dimen>
     <dimen name="add_task_priority_padding">10dp</dimen>
     <dimen name="add_task_properties_button_size">40dp</dimen>
+
+    <!-- Navigation Drawer -->
+    <dimen name="nav_drawer_header_top_margin">24dp</dimen>
+    <dimen name="nav_drawer_header_text_spacing">14dp</dimen>
+    <dimen name="nav_drawer_header_text_margin">5dp</dimen>
 
     <!-- Task List -->
     <dimen name="task_item_container_padding">2dp</dimen>
